@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "py379"
+version = "0.1.0"
+description = ""
+authors = ["pympk <yee_ping@yahoo.com>"]
+
+[tool.poetry.dependencies]
+python = "3.7.9"
+pandas = "1.3.5"
+numpy = "1.21.6"
+matplotlib = "^3.5.2"
+ipykernel = "^6.15.0"
+# yfinance = "^0.1.70"
+yfinance = "^0.1.85"
+plotly = "^5.9.0"
+ta-lib = {path = "TA_Lib-0.4.24-cp37-cp37m-win_amd64.whl"}
+statsmodels = "0.13.2"
+sklearn = "0.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+flake8 = "^4.0.1"
+black = "^22.3.0"
+
+[tool.black]
+line-length = 79
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
