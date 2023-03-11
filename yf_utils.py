@@ -76,17 +76,15 @@ def _3_random_slices(
     days_total = days_lookback + days_eval
     if verbose:
         print(
-            f"days_lookback: {days_lookback}, days_eval: {days_eval}, \
-                days_total: {days_total}, len_df: {len_df}"
+            f"days_lookback: {days_lookback}, days_eval: {days_eval}, days_total: {days_total}, len_df: {len_df}"
         )
-
+                 
 
 #########################################
     # if days_total > len_df:
-    if days_total >= len_df:    
+    if days_total >= len_df:
 #########################################
-        msg_err = f"days_total: {days_total} must be less or equal to \
-            len_df: {len_df}"
+        msg_err = f"days_total: {days_total} must be less or equal to len_df: {len_df}"
         raise SystemExit(msg_err)
 
     # random slices of iloc for train and eval that fits the days_lookback,
