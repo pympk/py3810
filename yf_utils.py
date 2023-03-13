@@ -44,7 +44,6 @@ def _2_split_train_val_test(
 
     return df_train, df_val, df_test
 
-
 def _3_random_slices(
     len_df, n_samples, days_lookback, days_eval, verbose=False
 ):
@@ -67,6 +66,7 @@ def _3_random_slices(
           i.e. [(248, 368, 388), (199, 319, 339), ... (45, 165, 185)]
     """
     # v1 correct out-of-bound end_eval
+    # v2 2023-03-11 check df generated from the random slices 
 
     # import random
     from random import randint
@@ -78,17 +78,17 @@ def _3_random_slices(
         print(
             f"days_lookback: {days_lookback}, days_eval: {days_eval}, days_total: {days_total}, len_df: {len_df}"
         )
-                 
 
-#########################################
-    # if days_total > len_df:
-    if days_total >= len_df:
-#########################################
+    if days_total > len_df:    
         msg_err = f"days_total: {days_total} must be less or equal to len_df: {len_df}"
         raise SystemExit(msg_err)
 
-    # random slices of iloc for train and eval that fits the days_lookback,
-    #  days_eval and total len_df constraints
+    # random slices of iloc for train and eval that fits the constraints:
+    #  days_lookback + days_eval > len_df
+    #  start_train >= 0
+    #  end_train - start_train = days_lookback
+    #  end_eval - end_train = days_eval
+    #  end_eval <= len_df
     r_slices = []
     while n_sample < n_samples:
         n_rand = randint(0, len_df)
@@ -96,16 +96,11 @@ def _3_random_slices(
         end_train = n_rand
         # start_eval = n_rand
         end_eval = n_rand + days_eval
-#########################################        
-        # if 0 <= start_train and end_eval <= len_df:
-        # df_eval[len_df] will be out-of-bound, df_eval[0:len_df] is ok
-        if 0 <= start_train and end_eval < len_df:            
-#########################################            
+        if 0 <= start_train and end_eval <= len_df:              
             r_slices.append((start_train, end_train, end_eval))
             n_sample += 1
 
     return r_slices
-
 
 def _4_lookback_slices(max_slices, days_lookbacks, verbose=False):
     """
@@ -145,7 +140,6 @@ def _4_lookback_slices(max_slices, days_lookbacks, verbose=False):
             print("")
 
     return lb_slices
-
 
 def _5_perf_ranks_old(df_close, days_lookbacks, verbose=False):
     """Returns perf_ranks_dict(dic. of dic. of symbols ranked in descending
