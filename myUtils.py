@@ -3139,13 +3139,17 @@ def symb_perf_stats_vectorized_v8(df_symbols_close):
            arr_CAGR_div_arr_UI.mean / np.std(arr_CAGR_div_arr_UI)]     
     """
     # v8 place 0.000001 in the last row where columns in the 2d drawdown array are all zeros
-    #    added grp_retnStd_div_UI, grp_CAGR, grp_CAGR_div_retnStd, grp_CAGR_div_UI 
+    #    added grp_retnStd_div_UI, grp_CAGR, grp_CAGR_div_retnStd, grp_CAGR_div_UI
 
     import numpy as np
     import pandas as pd
 
-    # ignore divide by zero in case arr_drawdown is zero
-    with np.errstate(divide='ignore'):
+    # ignore divide by zero in case arr_drawdown is zero and 
+    # with np.errstate(divide='ignore')
+    # ignore divide by zero encountered in scalar divide
+    # It occurs when df_eval returns 1 symbol and grp(CAGR) is 0.0
+    # with np.errstate(divide='ignore', invalid='ignore')
+    with np.errstate(divide='ignore', invalid='ignore'):  # changeed 2023-03-17  
 
         dates = df_symbols_close.index
         symbols = df_symbols_close.columns
