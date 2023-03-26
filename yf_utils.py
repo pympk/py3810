@@ -44,9 +44,7 @@ def _2_split_train_val_test(
 
     return df_train, df_val, df_test
 
-def _3_random_slices(
-    len_df, n_samples, days_lookback, days_eval, verbose=False
-):
+def _3_random_slices(len_df, n_samples, days_lookback, days_eval, verbose=False):
     """Returns a list of random tuples of start_train, end_train, end_eval, where
     iloc[start_train:end_train] is used for training,
     and iloc[end_train:end_eval] is used for evaluation.  The length of the
@@ -287,7 +285,6 @@ def _5_perf_ranks_old(df_close, days_lookbacks, verbose=False):
 
     return perf_ranks_dict, ranked_perf_ranks_dict
 
-
 def _5_perf_ranks(df_close, n_top_syms, verbose=False):
     """Returns perf_ranks(dic. of dic. of symbols ranked in descending
      performance) and most_common_syms(list of tuples of the most common
@@ -429,7 +426,6 @@ def _5_perf_ranks(df_close, n_top_syms, verbose=False):
 
     return perf_ranks, most_common_syms
 
-
 def _6_grp_tuples_sort_sum(l_tuples, reverse=True):
     # https://stackoverflow.com/questions/2249036/grouping-python-tuple-list
     # https://stackoverflow.com/questions/10695139/sort-a-list-of-tuples-by-2nd-item-integer-value
@@ -467,7 +463,6 @@ def _6_grp_tuples_sort_sum(l_tuples, reverse=True):
     grp_sorted_list = sorted(grp_list, key=itemgetter(1), reverse=reverse)
 
     return grp_sorted_list
-
 
 def _7_perf_eval_(df_close):
     """
@@ -563,8 +558,6 @@ def _7_perf_eval_(df_close):
     grp_retnStd_d_UI = [_mean, _std, _mean / _std]
 
     return df_perf, grp_retnStd_d_UI, grp_CAGR_d_retnStd, grp_CAGR_d_UI
-
-
 
 def _7_perf_eval_v1(df_close):
     """
@@ -668,3 +661,88 @@ def _7_perf_eval_v1(df_close):
         grp_CAGR = [grp_MeanCAGR, grp_StdCAGR, grp_MeanCAGR/grp_StdCAGR]    
 
     return df_perf, grp_retnStd_d_UI, grp_CAGR_d_retnStd, grp_CAGR_d_UI, grp_CAGR
+
+def top_set_sym_freq_cnt(top_set_syms_n_freq):
+    """
+    Top_set_syms_n_freq is a list of tuples. Each tuple is a pair of symbol:frequency_count, i.e.: 
+      [('LNTH', 6), ('TNK', 6), ('FTSM', 5), ('EME', 4), ('FCN', 4), ('PRG', 3), ('SGEN', 3)]
+
+    The function can accommodate upto 5 periods of days_lookbacks, i.e.:
+      days_lookbacks = [5, 10, 15, 20, 25], len(days_lookbacks)*3 = 15)
+
+    Returns a list of 14 lists. list[0], list[1], ..., list[14] are lists of symbols with
+    frequency_count of 15, 14, ..., 2 respectively.
+
+    Args:
+      top_set_syms_n_freq(list): List of tuples. Each tuple is a pair of symbol:frequency_count, i.e.: 
+        [('LNTH', 6), ('TNK', 6), ('FTSM', 5), ('EME', 4), ('FCN', 4), ('PRG', 3), ('SGEN', 3)]
+
+    Return:
+      l_sym_freq_cnt(list): list of 14 lists. list[0], list[1], ..., list[14] are lists of symbols with
+          frequency_count of 15, 14, ..., 2 respectively.
+    """
+
+    sym_freq_cnt_15 = []
+    sym_freq_cnt_14 = []
+    sym_freq_cnt_13 = []
+    sym_freq_cnt_12 = []
+    sym_freq_cnt_11 = []
+    sym_freq_cnt_10 = []
+    sym_freq_cnt_9 = []
+    sym_freq_cnt_8 = []
+    sym_freq_cnt_7 = []
+    sym_freq_cnt_6 = []
+    sym_freq_cnt_5 = []
+    sym_freq_cnt_4 = []
+    sym_freq_cnt_3 = []
+    sym_freq_cnt_2 = []
+
+    for sym_n_freq in top_set_syms_n_freq:
+        _sym, _freq = sym_n_freq[0], sym_n_freq[1]
+        if _freq == 15:
+            sym_freq_cnt_15.append(_sym)
+        elif _freq == 14:
+            sym_freq_cnt_14.append(_sym)
+        elif _freq == 13:
+            sym_freq_cnt_13.append(_sym)
+        elif _freq == 12:
+            sym_freq_cnt_12.append(_sym)                        
+        elif _freq == 11:
+            sym_freq_cnt_11.append(_sym)
+        elif _freq == 10:
+            sym_freq_cnt_10.append(_sym)            
+        elif _freq == 9:
+            sym_freq_cnt_9.append(_sym)
+        elif _freq == 8:
+            sym_freq_cnt_8.append(_sym)
+        elif _freq == 7:
+            sym_freq_cnt_7.append(_sym)  
+        elif _freq == 6:
+            sym_freq_cnt_6.append(_sym)
+        elif _freq == 5:
+            sym_freq_cnt_5.append(_sym)
+        elif _freq == 4:
+            sym_freq_cnt_4.append(_sym)
+        elif _freq == 3:
+            sym_freq_cnt_3.append(_sym)          
+        else:
+            sym_freq_cnt_2.append(_sym)
+
+    l_sym_freq_cnt = []
+
+    l_sym_freq_cnt.append(sym_freq_cnt_15)
+    l_sym_freq_cnt.append(sym_freq_cnt_14)
+    l_sym_freq_cnt.append(sym_freq_cnt_13)
+    l_sym_freq_cnt.append(sym_freq_cnt_12)    
+    l_sym_freq_cnt.append(sym_freq_cnt_11)   
+    l_sym_freq_cnt.append(sym_freq_cnt_10)
+    l_sym_freq_cnt.append(sym_freq_cnt_9)
+    l_sym_freq_cnt.append(sym_freq_cnt_8)
+    l_sym_freq_cnt.append(sym_freq_cnt_7)    
+    l_sym_freq_cnt.append(sym_freq_cnt_6)
+    l_sym_freq_cnt.append(sym_freq_cnt_5)
+    l_sym_freq_cnt.append(sym_freq_cnt_4)
+    l_sym_freq_cnt.append(sym_freq_cnt_3)    
+    l_sym_freq_cnt.append(sym_freq_cnt_2)    
+
+    return l_sym_freq_cnt

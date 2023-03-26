@@ -1,72 +1,3 @@
-
-def top_set_sym_freq_cnt(top_set_syms_n_freq):
-    # accommodate upto 5 periods of days_lookbacks(i.e. days_lookbacks = [5, 10, 15, 20, 25], len(days_lookbacks)*3 = 15)
-    sym_freq_cnt_15 = []
-    sym_freq_cnt_14 = []
-    sym_freq_cnt_13 = []
-    sym_freq_cnt_12 = []
-    sym_freq_cnt_11 = []
-    sym_freq_cnt_10 = []
-    sym_freq_cnt_9 = []
-    sym_freq_cnt_8 = []
-    sym_freq_cnt_7 = []
-    sym_freq_cnt_6 = []
-    sym_freq_cnt_5 = []
-    sym_freq_cnt_4 = []
-    sym_freq_cnt_3 = []
-    sym_freq_cnt_2 = []
-
-    for sym_n_freq in top_set_syms_n_freq:
-        _sym = sym_n_freq[0]
-        _freq = sym_n_freq[1]
-        if _freq == 15:
-            sym_freq_cnt_15.append(_sym)
-        elif _freq == 14:
-            sym_freq_cnt_14.append(_sym)
-        elif _freq == 13:
-            sym_freq_cnt_13.append(_sym)
-        elif _freq == 12:
-            sym_freq_cnt_12.append(_sym)                        
-        elif _freq == 11:
-            sym_freq_cnt_11.append(_sym)
-        elif _freq == 10:
-            sym_freq_cnt_10.append(_sym)            
-        elif _freq == 9:
-            sym_freq_cnt_9.append(_sym)
-        elif _freq == 8:
-            sym_freq_cnt_8.append(_sym)
-        elif _freq == 7:
-            sym_freq_cnt_7.append(_sym)  
-        elif _freq == 6:
-            sym_freq_cnt_6.append(_sym)
-        elif _freq == 5:
-            sym_freq_cnt_5.append(_sym)
-        elif _freq == 4:
-            sym_freq_cnt_4.append(_sym)
-        elif _freq == 3:
-            sym_freq_cnt_3.append(_sym)          
-        else:
-            sym_freq_cnt_2.append(_sym)
-
-    l_sym_freq_cnt = []
-
-    l_sym_freq_cnt.append(sym_freq_cnt_15)
-    l_sym_freq_cnt.append(sym_freq_cnt_14)
-    l_sym_freq_cnt.append(sym_freq_cnt_13)
-    l_sym_freq_cnt.append(sym_freq_cnt_12)    
-    l_sym_freq_cnt.append(sym_freq_cnt_11)   
-    l_sym_freq_cnt.append(sym_freq_cnt_10)
-    l_sym_freq_cnt.append(sym_freq_cnt_9)
-    l_sym_freq_cnt.append(sym_freq_cnt_8)
-    l_sym_freq_cnt.append(sym_freq_cnt_7)    
-    l_sym_freq_cnt.append(sym_freq_cnt_6)
-    l_sym_freq_cnt.append(sym_freq_cnt_5)
-    l_sym_freq_cnt.append(sym_freq_cnt_4)
-    l_sym_freq_cnt.append(sym_freq_cnt_3)    
-    l_sym_freq_cnt.append(sym_freq_cnt_2)    
-
-    return l_sym_freq_cnt    
-
 def best_perf_syms_sets_lookback_slices(sets_lookback_slices, verbose=False):
 
   # grp_top_set_syms_n_freq is a list of lists of top_set_syms_n_freq, e.g.
@@ -156,7 +87,7 @@ import pandas as pd
 import datetime
 # from IPython.display import display, HTML
 from yf_utils import _2_split_train_val_test, _3_random_slices, _4_lookback_slices
-from yf_utils import _5_perf_ranks, _6_grp_tuples_sort_sum
+from yf_utils import _5_perf_ranks, _6_grp_tuples_sort_sum, top_set_sym_freq_cnt
 from myUtils import pickle_load, pickle_dump
 
 pd.set_option('display.max_rows', 500)
@@ -169,18 +100,17 @@ path_data_dump = path_dir + "VSCode_dump/"
 
 fp_df_close_clean = 'df_close_clean'
 
-verbose = True  # True prints more output
 # verbose = False  # True prints more output
+verbose = True  # True prints more output
 
-# write run results to df_eval_results
-# store_results = False
-store_results = True
+# store_results = True
+store_results = False
 
 n_samples = 20
 
 # for training, the number of days to lookback from iloc max-lookback iloc_end_train
 days_lookbacks = [30, 60, 120]
-days_lookbacks = [15, 30, 60, 120]
+# days_lookbacks = [15, 30, 60, 120]
 days_lookbacks.sort()
 
 # number of days from iloc_end_train are used to evaluate effectiveness of the training
