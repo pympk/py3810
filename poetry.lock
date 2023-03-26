@@ -283,6 +283,26 @@ python-versions = ">=3.7"
 test = ["pytest (>=6)"]
 
 [[package]]
+name = "exchange-calendars"
+version = "4.2.5"
+description = "Calendars for securities exchanges"
+category = "main"
+optional = false
+python-versions = "~=3.8"
+
+[package.dependencies]
+korean-lunar-calendar = "*"
+numpy = "*"
+pandas = ">=1.1"
+pyluach = "*"
+python-dateutil = "*"
+pytz = "*"
+toolz = "*"
+
+[package.extras]
+dev = ["flake8", "hypothesis", "pytest", "pytest-benchmark", "pytest-xdist", "pip-tools"]
+
+[[package]]
 name = "executing"
 version = "1.2.0"
 description = "Get the currently executing AST node of a frame, and other information"
@@ -605,6 +625,14 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "korean-lunar-calendar"
+version = "0.3.1"
+description = "Korean Lunar Calendar"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "lxml"
 version = "4.9.2"
 description = "Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API."
@@ -824,6 +852,20 @@ pytz = ">=2020.1"
 
 [package.extras]
 test = ["hypothesis (>=5.5.3)", "pytest (>=6.0)", "pytest-xdist (>=1.31)"]
+
+[[package]]
+name = "pandas-market-calendars"
+version = "4.1.4"
+description = "Market and exchange trading calendars for pandas"
+category = "main"
+optional = false
+python-versions = ">=3.8.0"
+
+[package.dependencies]
+exchange-calendars = ">=3.3"
+pandas = ">=1.1"
+python-dateutil = "*"
+pytz = "*"
 
 [[package]]
 name = "pandocfilters"
@@ -1054,6 +1096,18 @@ python-versions = ">=3.6"
 
 [package.extras]
 plugins = ["importlib-metadata"]
+
+[[package]]
+name = "pyluach"
+version = "2.2.0"
+description = "A Python package for dealing with Hebrew (Jewish) calendar dates."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+doc = ["sphinx (>=6.1.3,<6.2.0)", "sphinx_rtd_theme (>=1.2.0,<1.3.0)"]
+test = ["pytest", "pytest-cov", "flake8", "beautifulsoup4"]
 
 [[package]]
 name = "pyparsing"
@@ -1377,6 +1431,14 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "toolz"
+version = "0.12.0"
+description = "List processing tools and functional utilities"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[[package]]
 name = "tornado"
 version = "6.2"
 description = "Tornado is a Python web framework and asynchronous networking library, originally developed at FriendFeed."
@@ -1553,7 +1615,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "flake8 (<5)", "pytest-co
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.1"
-content-hash = "1196c9bfbdf4ffb91114cc323bb1bf6a108cfa0edde443ca06ef8a026de4e1ee"
+content-hash = "107de005d1c95f606f708d943c1a6b665acd694053dea8e4ba310dea8720fb0d"
 
 [metadata.files]
 ansiwrap = []
@@ -1602,6 +1664,7 @@ entrypoints = [
     {file = "entrypoints-0.4.tar.gz", hash = "sha256:b706eddaa9218a19ebcd67b56818f05bb27589b1ca9e8d797b74affad4ccacd4"},
 ]
 exceptiongroup = []
+exchange-calendars = []
 executing = []
 fastjsonschema = []
 flake8 = []
@@ -1629,6 +1692,7 @@ jupyterlab-pygments = [
 ]
 jupyterlab-widgets = []
 kiwisolver = []
+korean-lunar-calendar = []
 lxml = []
 markupsafe = []
 matplotlib = []
@@ -1646,6 +1710,7 @@ numpy = []
 outcome = []
 packaging = []
 pandas = []
+pandas-market-calendars = []
 pandocfilters = [
     {file = "pandocfilters-1.5.0-py2.py3-none-any.whl", hash = "sha256:33aae3f25fd1a026079f5d27bdd52496f0e0803b3469282162bafdcbdf6ef14f"},
     {file = "pandocfilters-1.5.0.tar.gz", hash = "sha256:0b679503337d233b4339a817bfc8c50064e2eff681314376a47cb582305a7a38"},
@@ -1694,6 +1759,7 @@ pycparser = [
 ]
 pyflakes = []
 pygments = []
+pyluach = []
 pyparsing = [
     {file = "pyparsing-3.0.9-py3-none-any.whl", hash = "sha256:5026bae9a10eeaefb61dab2f09052b9f4307d44aee4eda64b309723d8d206bbc"},
     {file = "pyparsing-3.0.9.tar.gz", hash = "sha256:2b020ecf7d21b687f219b71ecad3631f644a47f01403fa1d1036b0c6416d70fb"},
@@ -1737,6 +1803,7 @@ tomli = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
 ]
+toolz = []
 tornado = []
 tqdm = []
 traitlets = []
