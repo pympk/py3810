@@ -20,7 +20,7 @@ def best_perf_syms_sets_lookback_slices(sets_lookback_slices, verbose=False):
       iloc_end_train   = lb_slice[1]     # iloc of end of training period
       iloc_start_eval  = iloc_end_train  # iloc of start of evaluation period
       iloc_end_eval    = lb_slice[2]     # iloc of end of evaluation period
-      lookback         = iloc_end_train - iloc_start_train
+      n_days           = iloc_end_train - iloc_start_train  # one of the lookback-days in lookback-slice
       d_eval           = iloc_end_eval - iloc_start_eval
 
       _df = df.iloc[iloc_start_train:iloc_end_train]
@@ -28,7 +28,7 @@ def best_perf_syms_sets_lookback_slices(sets_lookback_slices, verbose=False):
       date_end_df_train = _df.index[-1].strftime('%Y-%m-%d')
 
       if verbose:
-        print(f'days lookback:       {lookback},  {j + 1} of {len(days_lookbacks)} days_lookbacks: {days_lookbacks}')
+        print(f'days lookback:       {n_days},  {j + 1} of {len(days_lookbacks)} days_lookbacks: {days_lookbacks}')
         print(f'lb_slices:           {lb_slices}')
         print(f'lb_slice:            {lb_slice}')
         print(f'days eval:           {d_eval}')    
@@ -42,12 +42,11 @@ def best_perf_syms_sets_lookback_slices(sets_lookback_slices, verbose=False):
       # unsorted list of the most frequent symbols in performance metrics of the lb_slices  
       grp_most_freq_syms.append(most_freq_syms)  
       if verbose:    
-        # 1 lookback of r_CAGR/UI, r_CAGR/retnStd, r_retnStd/UI
+        # n_days of r_CAGR/UI, r_CAGR/retnStd, r_retnStd/UI
         print(f'perf_ranks: {perf_ranks}')  
         # most common symbols of perf_ranks 
         print(f'most_freq_syms: {most_freq_syms}')     
-        # grp_perf_ranks[lookback] = perf_ranks
-        print(f'+++ finish lookback slice {lookback} +++\n')
+        print(f'+++ finish lookback slice {n_days} +++\n')
 
     if verbose:
       print(f'grp_most_freq_syms: {grp_most_freq_syms}')
