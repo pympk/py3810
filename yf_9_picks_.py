@@ -102,14 +102,14 @@ fp_df_close_clean = 'df_close_clean'
 # verbose = False  # True prints more output
 verbose = True  # True prints more output
 
-# store_results = True
-store_results = False
+store_results = True
+# store_results = False
 
 n_samples = 20
 
 # for training, the number of days to lookback from iloc max-lookback iloc_end_train
 days_lookbacks = [30, 60, 120]
-# days_lookbacks = [15, 30, 60, 120]
+days_lookbacks = [15, 30, 60, 120]
 days_lookbacks.sort()
 
 # number of days from iloc_end_train are used to evaluate effectiveness of the training
