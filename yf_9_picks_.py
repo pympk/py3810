@@ -108,7 +108,7 @@ store_results = True
 n_samples = 20
 
 # for training, the number of days to lookback from iloc max-lookback iloc_end_train
-days_lookbacks = [30, 60, 120]
+# days_lookbacks = [30, 60, 120]
 days_lookbacks = [15, 30, 60, 120]
 days_lookbacks.sort()
 
