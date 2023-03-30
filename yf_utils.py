@@ -1,4 +1,4 @@
-def _2_split_train_val_test(
+def split_train_val_test(
     df, s_train=0.7, s_val=0.2, s_test=0.1, verbose=False
 ):
     """Split df into training (df_train), validation (df_val)
@@ -44,7 +44,7 @@ def _2_split_train_val_test(
 
     return df_train, df_val, df_test
 
-def _3_random_slices(len_df, n_samples, days_lookback, days_eval, verbose=False):
+def random_slices(len_df, n_samples, days_lookback, days_eval, verbose=False):
     """Returns a list of random tuples of start_train, end_train, end_eval, where
     iloc[start_train:end_train] is used for training,
     and iloc[end_train:end_eval] is used for evaluation.  The length of the
@@ -100,7 +100,7 @@ def _3_random_slices(len_df, n_samples, days_lookback, days_eval, verbose=False)
 
     return r_slices
 
-def _4_lookback_slices(max_slices, days_lookbacks, verbose=False):
+def lookback_slices(max_slices, days_lookbacks, verbose=False):
     """
     Create sets of sub-slices from max_slices and days_lookbacks. A slice is
     a tuple of iloc values for start_train:end_train=start_eval:end_eval.
@@ -139,7 +139,7 @@ def _4_lookback_slices(max_slices, days_lookbacks, verbose=False):
 
     return lb_slices
 
-def _5_perf_ranks_old(df_close, days_lookbacks, verbose=False):
+def perf_ranks_old(df_close, days_lookbacks, verbose=False):
     """Returns perf_ranks_dict(dic. of dic. of symbols ranked in descending
      performance) and ranked_perf_ranks_dict(dic. of symbols ranked in
      descending frequency in a combined pool of symbols in perf_ranks_dict).
@@ -285,7 +285,9 @@ def _5_perf_ranks_old(df_close, days_lookbacks, verbose=False):
 
     return perf_ranks_dict, ranked_perf_ranks_dict
 
-def _5_perf_ranks(df_close, n_top_syms, verbose=False):
+
+
+def rank_perf(df_close, n_top_syms, verbose=False):
     """Returns perf_ranks(dic. of dic. of symbols ranked in descending
      performance) and most_common_syms(list of tuples of the most common
      symbols in perf_ranks in descending frequency).
@@ -426,7 +428,9 @@ def _5_perf_ranks(df_close, n_top_syms, verbose=False):
 
     return perf_ranks, most_common_syms
 
-def _6_grp_tuples_sort_sum(l_tuples, reverse=True):
+
+
+def grp_tuples_sort_sum(l_tuples, reverse=True):
     # https://stackoverflow.com/questions/2249036/grouping-python-tuple-list
     # https://stackoverflow.com/questions/10695139/sort-a-list-of-tuples-by-2nd-item-integer-value
     """
@@ -464,7 +468,7 @@ def _6_grp_tuples_sort_sum(l_tuples, reverse=True):
 
     return grp_sorted_list
 
-def _7_perf_eval_(df_close):
+def perf_eval_(df_close):
     """
     df_close is a dataframe with date index, columns of symbols' closing price, and symbols as column names.
     The function first calculates symbols' drawdown, Ulcer-Index, max-drawdown, std(returns),
@@ -559,7 +563,7 @@ def _7_perf_eval_(df_close):
 
     return df_perf, grp_retnStd_d_UI, grp_CAGR_d_retnStd, grp_CAGR_d_UI
 
-def _7_perf_eval_v1(df_close):
+def perf_eval_v1(df_close):
     """
     df_close is a dataframe with date index, columns of symbols' closing price, and symbols as column names.
     The function first calculates symbols' drawdown, Ulcer-Index, max-drawdown, std(returns),
@@ -746,3 +750,328 @@ def top_set_sym_freq_cnt(top_set_syms_n_freq):
     l_sym_freq_cnt.append(sym_freq_cnt_2)    
 
     return l_sym_freq_cnt
+
+def compare_picks_v_SPY(df_eval, df_SPY):
+    import numpy as np
+    from myUtils import symb_perf_stats_vectorized_v8 as sps
+
+    _d_cols_values = {}
+
+    if np.all(df_eval.index == df_SPY.index):
+        (
+            _symbols,
+            _period_yr,
+            _retn,
+            _DD,
+            _UI,
+            _MDD,
+            _retnMean,
+            _retnStd,
+            _retnStd_div_UI,
+            _CAGR,
+            _CAGR_div_retnStd,
+            _CAGR_div_UI,
+            SPY_retnStd_d_UI,
+            SPY_CAGR,
+            SPY_CAGR_d_retnStd,
+            SPY_CAGR_d_UI,
+        ) = sps(df_SPY)
+
+        (
+            _symbols,
+            _period_yr,
+            _retn,
+            _DD,
+            _UI,
+            _MDD,
+            _retnMean,
+            _retnStd,
+            _retnStd_div_UI,
+            _CAGR,
+            _CAGR_div_retnStd,
+            _CAGR_div_UI,
+            grp_retnStd_d_UI,
+            grp_CAGR,
+            grp_CAGR_d_retnStd,
+            grp_CAGR_d_UI,
+        ) = sps(df_eval)
+
+        ### column names for rows ###
+        col_add1 = ["grp(CAGR)_mean", "grp(CAGR)_std", "grp(CAGR)_mean/std"]
+        col_add2 = ["grp(CAGR/UI)_mean", "grp(CAGR/UI)_std", "grp(CAGR/UI)_mean/std"]
+        col_add3 = [
+            "grp(CAGR/retnStd)_mean",
+            "grp(CAGR/retnStd)_std",
+            "grp(CAGR/retnStd)_mean/std",
+        ]
+        col_add4 = [
+            "grp(retnStd/UI)_mean",
+            "grp(retnStd/UI)_std",
+            "grp(retnStd/UI)_mean/std",
+        ]
+        col_add5 = ["SPY_CAGR", "SPY_CAGR/UI", "SPY_CAGR/retnStd", "SPY_retnStd/UI"]
+        cols = col_add1 + col_add2 + col_add3 + col_add4 + col_add5
+
+        row_add1 = [grp_CAGR[0], grp_CAGR[1], grp_CAGR[2]]
+        row_add2 = [grp_CAGR_d_UI[0], grp_CAGR_d_UI[1], grp_CAGR_d_UI[2]]
+        row_add3 = [grp_CAGR_d_retnStd[0], grp_CAGR_d_retnStd[1], grp_CAGR_d_retnStd[2]]
+        row_add4 = [grp_retnStd_d_UI[0], grp_retnStd_d_UI[1], grp_retnStd_d_UI[2]]
+        row_add5 = [
+            SPY_CAGR[0],
+            SPY_CAGR_d_UI[0],
+            SPY_CAGR_d_retnStd[0],
+            SPY_retnStd_d_UI[0],
+        ]
+        rows = row_add1 + row_add2 + row_add3 + row_add4 + row_add5
+
+        _d_cols_values = dict(zip(cols, rows))
+
+    return _d_cols_values
+
+
+
+def get_grp_top_syms_n_freq(df, sets_lookback_slices, days_lookbacks, n_top_syms, syms_start, syms_end, verbose=False):
+    from yf_utils import rank_perf, grp_tuples_sort_sum
+
+    # grp_top_set_syms_n_freq is a list of lists of top_set_syms_n_freq, e.g.
+    #   [[('AGY', 7), ('PCG', 7), ('KDN', 6), ..., ('CYT', 3)],
+    #    [('FCN', 9), ('HIG', 9), ('SJR', 8), ..., ('BFH', 2)]]
+    #   where each list is the best performing symbols from a lb_slices, e.g.
+    #     [(483, 513, 523), (453, 513, 523), (393, 513, 523)]
+    grp_top_set_syms_n_freq = (
+        []
+    )  # list of lists of top_set_symbols_n_freq, there are n_samples lists in list
+    grp_top_set_syms = []  # grp_top_set_syms_n_freq without the frequency count
+
+    dates_end_df_train = []  # store [date_end_df_train, ...]
+
+    # lb_slices, e.g  [(483, 513, 523), (453, 513, 523), (393, 513, 523)],
+    #  is one max_lookback_slice, e.g. (393, 513, 523), along with
+    #  the remaining slices of the days_lookbacks, e.g. (483, 513, 523), (453, 513, 523)
+    for i, lb_slices in enumerate(sets_lookback_slices):
+        print(
+            f"\n########## {i + 1} of {len(sets_lookback_slices)} lb_slices: {lb_slices} in sets_lookcak_slices ##########"
+        )
+
+        # unsorted list of the most frequent symbols in performance metrics of the lb_slices
+        grp_most_freq_syms = []
+        for j, lb_slice in enumerate(lb_slices):  # lb_slice, e.g. (246, 276, 286)
+            iloc_start_train = lb_slice[0]  # iloc of start of training period
+            iloc_end_train = lb_slice[1]  # iloc of end of training period
+            iloc_start_eval = iloc_end_train  # iloc of start of evaluation period
+            iloc_end_eval = lb_slice[2]  # iloc of end of evaluation period
+            lookback = iloc_end_train - iloc_start_train
+            d_eval = iloc_end_eval - iloc_start_eval
+
+            _df = df.iloc[iloc_start_train:iloc_end_train]
+            date_start_df_train = _df.index[0].strftime("%Y-%m-%d")
+            date_end_df_train = _df.index[-1].strftime("%Y-%m-%d")
+
+            if verbose:
+                print(
+                    f"days lookback:       {lookback},  {j + 1} of {len(days_lookbacks)} days_lookbacks: {days_lookbacks}"
+                )
+                print(f"lb_slices:           {lb_slices}")
+                print(f"lb_slice:            {lb_slice}")
+                print(f"days eval:           {d_eval}")
+                print(f"iloc_start_train:    {iloc_start_train}")
+                print(f"iloc_end_train:      {iloc_end_train}")
+                print(f"date_start_df_train: {date_start_df_train}")
+                print(f"date_end_df_train:   {date_end_df_train}")
+
+            # perf_ranks, performance rank of one day in days_loolbacks (30 of [15, 30, 60]) e.g.:
+            # {'period-30': {'r_CAGR/UI': array(['BMA', 'ACIW', 'SHV', 'GBTC', 'BVH', ..., 'BGNE', 'HLF', 'WB', 'HZNP']
+            #                'r_CAGR/retnStd': array(['BMA', 'GBTC', 'EDU', 'PAR', ..., 'BGNE', 'ACIW', 'HLF', 'EXAS']
+            #                'r_retnStd/UI': array(['HZNP', 'SHV', 'BVH', 'ACIW', ..., 'FTSM', 'COLL', 'ALGN', 'JOE']
+            # most_freq_syms, most frequency symbols of one day in days_loolbacks (30 of [15, 30, 60]) e.g.:
+            # [('BMA', 3), ('ACIW', 3), ('BVH', 3), ('BGNE', 3), ('SHV', 2), ..., ('GBTC', 2), ('AJRD', 1), ('TGH', 1)]
+            perf_ranks, most_freq_syms = rank_perf(_df, n_top_syms=n_top_syms)
+            # unsorted accumulation of most_freq_syms for all the days in days_lookbacks
+            grp_most_freq_syms.append(most_freq_syms)
+            if verbose:
+                # one lookback of r_CAGR/UI, r_CAGR/retnStd, r_retnStd/UI, e.g. 30 of days_lookbacks [15, 30, 60]
+                print(f"perf_ranks: {perf_ranks}")
+                # most common symbols of perf_ranks
+                print(f"most_freq_syms: {most_freq_syms}")
+                # grp_perf_ranks[lookback] = perf_ranks
+                print(f"+++ finish lookback slice {lookback} +++\n")
+
+        if verbose:
+            print(f"grp_most_freq_syms: {grp_most_freq_syms}")
+            # grp_most_freq_syms a is list of lists of tuples of
+            #  the most-common-symbols symbol:frequency cumulated from
+            #  each days_lookback
+            print(f"**** finish lookback slices {lb_slices} ****\n")
+
+        # flatten list of lists of (symbol:frequency_count) pairs of all the days in days_lookbacks
+        flat_grp_most_freq_syms = [
+            val for sublist in grp_most_freq_syms for val in sublist
+        ]
+        # sum symbol's frequency_count, return sorted tuples of "symbol:frequency_count"
+        #  in descending order for all the days in days_lookbacks
+        #  e.g. [('TA', 6), ('OEC', 4), ('SHV', 4), ('HY', 3), ('ELF', 2), ... , ('TNP', 1)]
+        set_most_freq_syms = grp_tuples_sort_sum(
+            flat_grp_most_freq_syms, reverse=True
+        )
+        # get the top n_top_syms of the most frequent "symbol, frequency" pairs
+        top_set_syms_n_freq = set_most_freq_syms[0:n_top_syms]
+        # get symbols from top_set_syms_n_freq, i[0] = symbol, i[1]=symbol's frequency count
+        top_set_syms = [i[0] for i in top_set_syms_n_freq[syms_start:syms_end]]
+
+        # grp_top_set_syms_n_freq is a list of lists of top_set_syms_n_freq, e.g.
+        #   [[('AGY', 7), ('PCG', 7), ('KDN', 6), ..., ('CYT', 3)],
+        #    [('FCN', 9), ('HIG', 9), ('SJR', 8), ..., ('BFH', 2)]]
+        #   where each list is the best performing symbols from a lb_slices, e.g.
+        #     [(483, 513, 523), (453, 513, 523), (393, 513, 523)]
+        grp_top_set_syms_n_freq.append(top_set_syms_n_freq)
+        grp_top_set_syms.append(top_set_syms)
+        dates_end_df_train.append(
+            date_end_df_train
+        )  # df_train end date for set of lookback slices
+
+        if verbose:
+            print(
+                f"top {n_top_syms} ranked symbols and frequency from set {lb_slices}:\n{top_set_syms_n_freq}"
+            )
+            print(
+                f"top {n_top_syms} ranked symbols from set {lb_slices}:\n{top_set_syms}"
+            )
+            print(
+                f"===== finish top {n_top_syms} ranked symbols from days_lookback set {lb_slices} =====\n\n"
+            )
+
+    # return grp_top_set_syms_n_freq, grp_top_set_syms
+    return grp_top_set_syms_n_freq, grp_top_set_syms, dates_end_df_train
+
+
+
+def eval_grp_top_syms_n_freq(df, max_lookback_slices, sets_lookback_slices, grp_top_set_syms_n_freq, days_lookbacks, days_eval, n_samples,  n_top_syms, syms_start, syms_end, verbose):
+    import pandas as pd
+    from myUtils import symb_perf_stats_vectorized_v8
+
+    print("z_grp_top_set_syms_n_freq:")
+    # zip max_lookback_slices with top performing symbols:freq pairs
+    z_grp_top_set_syms_n_freq = zip(max_lookback_slices, grp_top_set_syms_n_freq)
+
+    idx_train = pd.Index([])
+    idx_eval = pd.Index([])
+
+    l_row_add_total = []
+    print(f"type(l_row_add_total): {type(l_row_add_total)}")
+    print(f"l_row_add_total: {l_row_add_total}\n\n")
+
+    for i, (_lookback_slice, _top_set_syms_n_freq) in enumerate(
+        z_grp_top_set_syms_n_freq
+    ):
+        iloc_start_train = _lookback_slice[0]
+        iloc_end_train = _lookback_slice[1]
+        iloc_start_eval = iloc_end_train
+        iloc_end_eval = _lookback_slice[2]
+
+        print(f"{i + 1 } of {n_samples} max_lookback_slice: {_lookback_slice}\n")
+        # print(f'max_lookback_slice: {_lookback_slice}\n')
+        # dates correspond to max_lookback_slice
+        idx_train = df.index[iloc_start_train:iloc_end_train]
+        date_start_df_train = idx_train[0].strftime("%Y-%m-%d")
+        date_end_df_train = idx_train[-1].strftime("%Y-%m-%d")
+        print(f"len(idx_train): {len(idx_train)}")
+        print(f"idx_train: {idx_train}")
+        print(
+            f"df_train_dates (inclusive): {date_start_df_train} - {date_end_df_train}\n"
+        )
+
+        idx_eval = df.index[iloc_start_eval:iloc_end_eval]
+        date_start_df_eval = idx_eval[0].strftime("%Y-%m-%d")
+        date_end_df_eval = idx_eval[-1].strftime("%Y-%m-%d")
+        print(f"len(idx_eval): {len(idx_eval)}")
+        print(f"idx_eval: {idx_eval}")
+        print(f"df_eval dates (inclusive): {date_start_df_eval} - {date_end_df_eval}\n")
+
+        print(f"top_set_syms_n_freq: {_top_set_syms_n_freq}\n")
+
+        l_sym_freq_cnt = top_set_sym_freq_cnt(_top_set_syms_n_freq)
+        if verbose:
+            print(f"set_lookback_slices: {sets_lookback_slices[i]}")
+            print(f"max_lookback_slice:  {_lookback_slice}")
+            print(f"days_lookbacks:      {days_lookbacks}")
+            print(f"date_end_df_train:   {date_end_df_train}")
+            print(f"sym_freq_15:         {l_sym_freq_cnt[0]}")
+            print(f"sym_freq_14:         {l_sym_freq_cnt[1]}")
+            print(f"sym_freq_13:         {l_sym_freq_cnt[2]}")
+            print(f"sym_freq_12:         {l_sym_freq_cnt[4]}")
+            print(f"sym_freq_10:         {l_sym_freq_cnt[5]}")
+            print(f"sym_freq_9:          {l_sym_freq_cnt[6]}")
+            print(f"sym_freq_8:          {l_sym_freq_cnt[7]}")
+            print(f"sym_freq_7:          {l_sym_freq_cnt[8]}")
+            print(f"sym_freq_6:          {l_sym_freq_cnt[9]}")
+            print(f"sym_freq_5:          {l_sym_freq_cnt[10]}")
+            print(f"sym_freq_4:          {l_sym_freq_cnt[11]}")
+            print(f"sym_freq_3:          {l_sym_freq_cnt[12]}")
+            print(f"sym_freq_2:          {l_sym_freq_cnt[13]}\n")
+
+        if idx_eval.empty:
+            msg_stop = (
+                f'\n\n**** STOPPED df_eval is empty, the run_type is "{run_type}" ****'
+            )
+            raise SystemExit(msg_stop)
+
+        _sym_idx = ["SPY"]
+        df_SPY = df[iloc_start_eval:iloc_end_eval][_sym_idx]
+
+        # drop list with frequency count 2 or less, in l_sym_freq_cnt from zip
+        zip_cnt_n_syms = zip(
+            [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3], l_sym_freq_cnt[:-1]
+        )
+        for item in zip_cnt_n_syms:
+            sym_freq_cnt = item[0]
+            syms = item[1]
+            if syms:  # iterate ONLY if there are symbols in syms
+                df_eval = df[iloc_start_eval:iloc_end_eval][syms]
+
+                if verbose:
+                    print(
+                        f"iloc_start_eval: {iloc_start_eval:>6},  df_eval first date: {date_start_df_eval:>10}"
+                    )
+                    print(
+                        f"iloc_end_eval:   {iloc_end_eval:>6},  df_eval last date:  {date_end_df_eval:>10}"
+                    )
+                    print(f"frequency count of symbol(s): {sym_freq_cnt}")
+
+                    syms_n_SPY = syms + ["SPY"]
+                    df_eval_n_SPY = df[iloc_start_eval:iloc_end_eval][syms_n_SPY]
+                    print(f"\ndf_eval_n_SPY:\n{df_eval_n_SPY}\n")
+
+                d_cols_values = compare_picks_v_SPY(df_eval, df_SPY)
+                val_rows = []
+
+                print(f"Function compare_picks_v_SPY returned column_name:value pairs")
+                print(f'{"column_name":<45}{"value":<14}')
+                for key_col in d_cols_values:
+                    print(f"{key_col:<30}{d_cols_values[key_col]:>20,.4f}")
+                    val_rows.append(d_cols_values[key_col])
+                print("")
+
+                row_add0 = [
+                    n_samples,
+                    str(days_lookbacks),
+                    days_eval,
+                    n_top_syms,
+                    syms_start,
+                    syms_end,
+                    sym_freq_cnt,
+                ]
+                row_add_total = row_add0 + val_rows
+
+                print(f"type(l_row_add_total): {type(l_row_add_total)}")
+                print(f"l_row_add_total: {l_row_add_total}")
+                print(f"type(row_add_total): {type(row_add_total)}")
+                print(f"row_add_total: {row_add_total}")
+
+                l_row_add_total.append(row_add_total)
+
+        print("=" * 80, "\n\n\n")
+
+    print(f"type(l_row_add_total): {type(l_row_add_total)}")
+    print(f"l_row_add_total: {l_row_add_total}\n\n")
+
+    return l_row_add_total
