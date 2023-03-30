@@ -222,17 +222,12 @@ def eval_grp_top_syms_n_freq(df, max_lookback_slices, grp_top_set_syms_n_freq, v
             f"df_train_dates (inclusive): {date_start_df_train} - {date_end_df_train}\n"
         )
 
-        if run_type != "current":
-            idx_eval = df.index[iloc_start_eval:iloc_end_eval]
-            date_start_df_eval = idx_eval[0].strftime("%Y-%m-%d")
-            date_end_df_eval = idx_eval[-1].strftime("%Y-%m-%d")
-            print(f"len(idx_eval): {len(idx_eval)}")
-            print(f"idx_eval: {idx_eval}")
-            print(
-                f"df_eval dates (inclusive): {date_start_df_eval} - {date_end_df_eval}\n"
-            )
-        else:  # run_type == "current'
-            print(f"run_type: {run_type}, idx_eval is empty: {idx_eval.empty}")
+        idx_eval = df.index[iloc_start_eval:iloc_end_eval]
+        date_start_df_eval = idx_eval[0].strftime("%Y-%m-%d")
+        date_end_df_eval = idx_eval[-1].strftime("%Y-%m-%d")
+        print(f"len(idx_eval): {len(idx_eval)}")
+        print(f"idx_eval: {idx_eval}")
+        print(f"df_eval dates (inclusive): {date_start_df_eval} - {date_end_df_eval}\n")
 
         print(f"top_set_syms_n_freq: {_top_set_syms_n_freq}\n")
 
@@ -257,13 +252,10 @@ def eval_grp_top_syms_n_freq(df, max_lookback_slices, grp_top_set_syms_n_freq, v
             print(f"sym_freq_2:          {l_sym_freq_cnt[13]}\n")
 
         if idx_eval.empty:
-            if run_type == "current":
-                msg_stop = f'\n\n**** Normal termination for run_type "{run_type}". Wrote current picks to df_picks ****'
-                print(f"df_picks:\n{df_picks}")
-                raise SystemExit(msg_stop)
-            else:
-                msg_stop = f'\n\n**** STOPPED df_eval is empty but run_type != "current", the run_type is "{run_type}" ****'
-                raise SystemExit(msg_stop)
+            msg_stop = (
+                f'\n\n**** STOPPED df_eval is empty, the run_type is "{run_type}" ****'
+            )
+            raise SystemExit(msg_stop)
 
         _sym_idx = ["SPY"]
         df_SPY = df[iloc_start_eval:iloc_end_eval][_sym_idx]
@@ -328,7 +320,6 @@ def eval_grp_top_syms_n_freq(df, max_lookback_slices, grp_top_set_syms_n_freq, v
 
 
 import pandas as pd
-import datetime
 from yf_utils import _2_split_train_val_test, _3_random_slices, _4_lookback_slices
 from yf_utils import _5_perf_ranks, _6_grp_tuples_sort_sum, top_set_sym_freq_cnt
 from myUtils import pickle_load, pickle_dump
@@ -336,16 +327,13 @@ from myUtils import pickle_load, pickle_dump
 pd.set_option("display.max_rows", 500)
 pd.set_option("display.max_columns", 30)
 pd.set_option("display.max_colwidth", 16)
-pd.set_option("display.width", 790)
+# pd.set_option("display.width", 790)  # format ipynb
+pd.set_option("display.width", 140)  # code-runner format
 
 path_dir = "C:/Users/ping/MyDrive/stocks/yfinance/"
 path_data_dump = path_dir + "VSCode_dump/"
 
 fp_df_close_clean = "df_close_clean"
-
-
-# #### Select run parameters. Parameters can also be passed using papermill by running yf_7_freq_cnt_pm_.ipynb
-
 
 # SELECT RUN PARAMETERS.async Parameters can also be passed using papermill by running yf_7_freq_cnt_pm_.ipynb
 verbose = True  # True prints more output
@@ -356,21 +344,19 @@ verbose = True  # True prints more output
 store_results = True
 
 # select run type
-# run_type = 'train'
+run_type = "train"
 # run_type = 'validate'
-run_type = "test"
-# run_type = 'current'
+# run_type = "test"
 
 # number of max lookback tuples to create for iloc iloc_start_train:iloc_end_train:iloc_end_eval
 # i.e. number of grp_top_set_syms_n_freq and grp_top_set_syms
 # n_samples = 400
-# n_samples = 20
 n_samples = 2
 
 # for training, the number of days to lookback from iloc max-lookback iloc_end_train
-days_lookbacks = [15, 30, 60]
+# days_lookbacks = [15, 30, 60]
 # days_lookbacks = [30, 60, 120]
-# days_lookbacks = [15, 30, 60, 120]
+days_lookbacks = [15, 30, 60, 120]
 days_lookbacks.sort()
 
 # number of days in dataframe to evaluate effectiveness of the training, days_eval = len(df_eval)
@@ -386,19 +372,10 @@ n_top_syms = 20
 syms_start = 0
 syms_end = 10
 
-# get picks of previous days by dropping the last n rows from df_current
-#  drop_last_n_rows = 1 drops the last row from df_current
-drop_last_n_rows = 0
-
-# over-ride parameters for run_type 'current'
-if run_type == "current":
-    days_eval = 0  # no need to eval, df_eval will be empty
-    n_samples = 1  # no need to repeat sample the current result, repeat sample will yield the same tuple
-
 
 ##########################################################
-fp_df_eval_results = f"df_eval_results_{run_type}"
-# fp_df_eval_results = f'df_eval_trash_new'
+# fp_df_eval_results = f"df_eval_results_{run_type}"
+fp_df_eval_results = f"df_eval_trash_new"
 ##########################################################
 
 
@@ -416,101 +393,37 @@ print(f"syms_end: {syms_end}")
 print(f"fp_df_eval_results: {fp_df_eval_results}")
 print(f"fp_df_picks: {fp_df_picks}")
 
-
-if run_type != "current":
-    df_eval_results = pickle_load(path_data_dump, fp_df_eval_results)
-
 df_picks = pickle_load(path_data_dump, fp_df_picks)
 df_close_clean = pickle_load(path_data_dump, fp_df_close_clean)
-
-
-# #### Split dataframe into Train, Validate and Test
-
 
 # Split df_close_clean into training (df_train), validation (df_val) and test (df_test) set.
 # The default split is 0.7, 0.2, 0.1 respectively.
 df_train, df_val, df_test = _2_split_train_val_test(df_close_clean)
 
-
-# #### Create df_current, a df with the latest data
-
-
 max_days_lookbacks = max(days_lookbacks)
 print(f"max_days_lookbacks: {max_days_lookbacks}")
 
-
-# df_current = df_test.tail(max_days_lookbacks)
-df_current = df_test.copy()
-
-# df_current.tail(3)
-
-
-# #### Load df according to run_type
-
-
+# Load df according to run_type
 if run_type == "train":
     df = df_train.copy()
 elif run_type == "validate":
     df = df_val.copy()
 elif run_type == "test":
     df = df_test.copy()
-elif run_type == "current":  # get the current picks
-    print(f"run_type: current")
-    slice_start = -(max_days_lookbacks + drop_last_n_rows)
-    slice_end = -drop_last_n_rows
-    if drop_last_n_rows == 0:  # return df with all rows
-        df = df_current[slice_start:].copy()
-    else:  # return df with dropped drop_last_n_rows rows
-        df = df_current[slice_start:slice_end].copy()
-    print(f"dropped last {drop_last_n_rows} row(s) from df")
-    print(f"df.tail():\n{df.tail()}\n")
 else:
-    msg_stop = f"ERROR run_type must be 'train', 'validate', 'test' or 'current', run_type is: {run_type}"
+    msg_stop = f"ERROR run_type must be 'train', 'validate', or 'test', run_type is: {run_type}"
     raise SystemExit(msg_stop)
 
-
-# #### Print dataframe for the run, and lengths of other dataframes
-
-
+# Print dataframe for the run, and lengths of other dataframes
 print(f"run_type: {run_type}, df.tail(3):\n{df.tail(3)}\n")
 len_df = len(df)
 len_df_train = len(df_train)
 len_df_val = len(df_val)
 len_df_test = len(df_test)
-len_df_current = len(df_current)
 print(f"run_type: {run_type}, len(df): {len(df)}")
 print(
-    f"len_df_train: {len_df_train}, len_df_val: {len_df_val}, len_df_test: {len_df_test}, len_df_current: {len_df_current} "
+    f"len_df_train: {len_df_train}, len_df_val: {len_df_val}, len_df_test: {len_df_test}"
 )
-
-
-# #### Create a sets of iloc lookback slices (iloc_start_train:iloc_end_train:iloc_end_eval), where:
-# * iloc_end_train - iloc_start_train = days_lookback
-# * iloc_end_eval - iloc_end_train = days_eval
-# #### for example, if given:
-# * n_samples = 2
-# * days_lookbacks = [10, 20, 30]
-# * days_eval = 5
-# #### a possible result is:
-#   - max_lookback_slices: [(417, 447, 452), (265, 295, 300)], where:
-#     - len(max_lookback_slices) = n_samples = 2
-#     - middle number in the tuples, 447 and 295, is the iloc of the "pivot day" for the days in "days_lookbacks" to lookback
-#     - 447 - 417 = middle number - first number = max(days_lookbacks) = 30
-#     - 295 - 265 = middle number - first number = max(days_lookbacks) = 30
-#     - 452 - 447 = last number - middle number = days_eval = 5
-#     - 300 - 295 = last number - middle number = days_eval = 5
-#   - sets_lookback_slices: [[(437, 447, 452), (427, 447, 452), (417, 447, 452)], [(285, 295, 300), (275, 295, 300), (265, 295, 300)]], where:
-#     - len(sets_lookback_slices) = n_samples = 2
-#     - last tuple in each list, i.e. (417, 447, 452) and (265, 295, 300), is a tuple from max_lookback_slices
-#     - where a set, e.g. [(437, 447, 452), (427, 447, 452), (417, 447, 452)]:
-#       - middle number, 447, iloc of the "pivot day" is constant for that set
-#       - middle number - first number, is the training period specified in days_lookbacks
-#         - 447 - 437 = middle number - first number = days_lookbacks[0] = 10
-#         - 447 - 427 = middle number - first number = days_lookbacks[1] = 20
-#         - 447 - 417 = middle number - first number = days_lookbacks[2] = 30
-#       - last number, 452, iloc of the end of the evaluation period is constant
-#         - 452 - 447 = last number - middle number = days_eval = 5
-
 
 # return n_samples slices
 max_lookback_slices = _3_random_slices(
@@ -525,7 +438,6 @@ sets_lookback_slices = _4_lookback_slices(
     max_slices=max_lookback_slices, days_lookbacks=days_lookbacks, verbose=False
 )
 
-
 if verbose:
     print(f"number of max_lookback_slices is equal to n_samples = {n_samples}")
     print(f"max_lookback_slices:\n{max_lookback_slices}\n")
@@ -536,28 +448,15 @@ if verbose:
         f'number of tuples in each "set of lookback slices" is equal to len(days_lookbacks): {len(days_lookbacks)}'
     )
 
-
-# #### Relationship between max_lookbak_slices, sets_lookback_slices and days_lookback
-# ![](images\fig_rel_max_lb_sets_lb_d_lb.jpg)
-
-
 # #### Generate grp_top_set_syms_n_freq. It is a list of sub-lists, e.g.:
 #  - [[('AGY', 7), ('PCG', 7), ('KDN', 6), ..., ('CYT', 3)], ..., [('FCN', 9), ('HIG', 9), ('SJR', 8), ..., ('BFH', 2)]]
 # #### grp_top_set_syms_n_freq has n_samples sub-lists. Each sub-list corresponds to a tuple in the max_lookback_slices. Each sub-list has n_top_syms tuples of (symbol, frequency) pairs, and is sorted in descending order of frequency. The frequency is the number of times the symbol appears in the top n_top_syms performance rankings of CAGR/UI, CAGR/retnStd and retnStd/UI.
 # #### Therefore, symbols in the sub-list are the best performing symbols for the periods in days_lookbacks. Each sub-list corresponds to a tuple in max_lookback_slices. There are as many sub-lists as there are tuples in max_lookback_slices.
-
-
 grp_top_set_syms_n_freq, grp_top_set_syms, dates_end_df_train = get_grp_top_syms_n_freq(
     df, sets_lookback_slices, verbose
 )
 
-
-grp_top_set_syms_n_freq
-
-
 # #### print the best performing symbols for each set in sets_lookback_slices
-
-
 for i, top_set_syms_n_freq in enumerate(grp_top_set_syms_n_freq):
     l_sym_freq_cnt = top_set_sym_freq_cnt(top_set_syms_n_freq)
     if verbose:
@@ -566,10 +465,6 @@ for i, top_set_syms_n_freq in enumerate(grp_top_set_syms_n_freq):
         print(
             f"set_lookback_slices {i + 1} of {len(sets_lookback_slices):>3}:    {sets_lookback_slices[i]}\n"
         )
-
-        if run_type == "current":
-            print(f"data below will be added to      {fp_df_picks}")
-
         print(f"max_days_lookbacks:              {max_days_lookbacks}")
         print(f"df end date for days_lookbacks:  {dates_end_df_train[i]}")
         print(f"days_lookbacks:                  {days_lookbacks}")
@@ -588,46 +483,14 @@ for i, top_set_syms_n_freq in enumerate(grp_top_set_syms_n_freq):
         print(f"sym_freq_3:                      {l_sym_freq_cnt[12]}")
         print(f"sym_freq_2:                      {l_sym_freq_cnt[13]}\n")
 
-if run_type == "current":  # record results to df
-    row_picks0 = [date_end_df_train, max_days_lookbacks, str(days_lookbacks)]
-    row_picks1 = [
-        str(l_sym_freq_cnt[0]),
-        str(l_sym_freq_cnt[1]),
-        str(l_sym_freq_cnt[2]),
-        str(l_sym_freq_cnt[3]),
-    ]
-    row_picks2 = [
-        str(l_sym_freq_cnt[4]),
-        str(l_sym_freq_cnt[5]),
-        str(l_sym_freq_cnt[6]),
-        str(l_sym_freq_cnt[7]),
-    ]
-    row_picks3 = [
-        str(l_sym_freq_cnt[8]),
-        str(l_sym_freq_cnt[9]),
-        str(l_sym_freq_cnt[10]),
-        str(l_sym_freq_cnt[11]),
-    ]
-    row_picks4 = [str(l_sym_freq_cnt[12]), str(l_sym_freq_cnt[13])]
-    row_picks_total = row_picks0 + row_picks1 + row_picks2 + row_picks3 + row_picks4
-    print(f"row_picks_total: {row_picks_total}")
-
-    df_picks.loc[len(df_picks)] = row_picks_total
-    pickle_dump(df_picks, path_data_dump, fp_df_picks)
-    print(f"appended row_picks_total to df_picks:\n{row_picks_total}\n")
-
 
 # #### Evaluate performance of symbols in set_lookback_slices versus SPY
-
-
 l_row_add_total = eval_grp_top_syms_n_freq(
     df, max_lookback_slices, grp_top_set_syms_n_freq, verbose
 )
 
-
 for row_add_total in l_row_add_total:
     print(f"row_add_total: {row_add_total}")
-
 
 if store_results:  # record results to df
     df_eval_results = pickle_load(path_data_dump, fp_df_eval_results)
