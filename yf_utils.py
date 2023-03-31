@@ -751,7 +751,8 @@ def top_set_sym_freq_cnt(top_set_syms_n_freq):
 
     return l_sym_freq_cnt
 
-def compare_picks_v_SPY(df_eval, df_SPY):
+
+def compare_picks_v_SPY_(df_eval, df_SPY):
     import numpy as np
     from myUtils import symb_perf_stats_vectorized_v8 as sps
 
@@ -945,7 +946,7 @@ def get_grp_top_syms_n_freq(df, sets_lookback_slices, days_lookbacks, n_top_syms
 
 
 
-def eval_grp_top_syms_n_freq(df, max_lookback_slices, sets_lookback_slices, grp_top_set_syms_n_freq, days_lookbacks, days_eval, n_samples,  n_top_syms, syms_start, syms_end, verbose):
+def eval_grp_top_syms_n_freq_(df, max_lookback_slices, sets_lookback_slices, grp_top_set_syms_n_freq, days_lookbacks, days_eval, n_samples,  n_top_syms, syms_start, syms_end, verbose):
     import pandas as pd
     from myUtils import symb_perf_stats_vectorized_v8
 
@@ -1075,5 +1076,6 @@ def eval_grp_top_syms_n_freq(df, max_lookback_slices, sets_lookback_slices, grp_
     print(f"l_row_add_total: {l_row_add_total}\n\n")
 
     return l_row_add_total
+
 
 # trash added this line
