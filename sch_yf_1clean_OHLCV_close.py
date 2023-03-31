@@ -1,4 +1,4 @@
-# %%
+
 # https://towardsdatascience.com/pandas-groupby-a-simple-but-detailed-tutorial-314b8f37005d
 # https://towardsdatascience.com/accessing-data-in-a-multiindex-dataframe-in-pandas-569e8767201d
 # https://towardsdatascience.com/summarizing-data-with-pandas-crosstab-efc8b9abecf
@@ -10,7 +10,7 @@
 
 # https://matplotlib.org/stable/gallery/pyplots/pyplot_text.html#sphx-glr-gallery-pyplots-pyplot-text-py
 
-# %%
+
 import pandas as pd
 import numpy as np
 from myUtils import pickle_load, pickle_dump
@@ -37,13 +37,13 @@ verbose = False  # True prints more output
 look_back_days = -250 * 6  # subset df iloc days, 6 years of data
 #################
 
-# %%
+
 print(f"Full path to pickled df_symbols_close:  {path_data_dump}{filename_pickled_df_symbols_close}")
 df_close = pickle_load(path_data_dump, filename_pickled_df_symbols_close, verbose=verbose)
 print(f"Full path to pickled df_adjOHLCV:  {path_data_dump}{filename_pickled_df_adjOHLCV}")
 df_adjOHLCV = pickle_load(path_data_dump, filename_pickled_df_adjOHLCV, verbose=verbose)
 
-# %%
+
 # https://stackoverflow.com/questions/63826291/pandas-series-find-column-by-value
 df = df_adjOHLCV[look_back_days::]
 df_v = df.xs('Volume', level=1, axis=1)  # select only Volume columns
@@ -53,7 +53,7 @@ idx_no_volume.sort()
 symbols_no_volume = df_v.columns[idx_no_volume]
 print(f'symbols with no volume:\n{symbols_no_volume}')
 
-# %%
+
 df_dif = df_v - df_v.shift(periods=1)
 rows, cols = np.where(df_dif == 0)
 idx_same_volume = list(set(cols))
@@ -62,7 +62,7 @@ idx_same_volume
 symbols_same_volume = df_v.columns[idx_same_volume]
 print(f'symbols with same volume:\n{symbols_same_volume}')
 
-# %%
+
 df_c = df.xs('Close', level=1, axis=1)  # select only Close columns
 df_c = df_c.fillna(0).copy()  # convert NaNs to zeros
 rows, cols = np.where(df_c == 0)  # row index, column index where trading volumes are zero
@@ -71,7 +71,7 @@ idx_no_close.sort()
 symbols_no_close = df_c.columns[idx_no_close]
 print(f'symbols with NaN close:\n{symbols_no_close}')
 
-# %%
+
 symbols_drop = list(symbols_no_close) + list(symbols_no_volume) + list(symbols_same_volume) # combine symbols with no volume and no close
 print(f'combined symbols with no volume, same volume and no close, inculdes duplicate symbols: {len(symbols_drop)}')
 symbols_drop = list(set(symbols_drop))  # drop duplicate symbols
@@ -81,7 +81,7 @@ df_c = df_close.iloc[look_back_days::]
 df_c = df_c.drop(symbols_drop, axis=1)
 print(f'unique symbols dropped from df_a (adjOLHLV) and df_c (Close): {len(symbols_drop)}')
 
-# %%
+
 print(f'symbols with no volume:   {len(symbols_no_volume):>5,}')
 print(f'symbols with same volume: {len(symbols_same_volume):>5,}')
 print(f'symbols with no close:    {len(symbols_no_close):>5,}\n')
@@ -92,23 +92,23 @@ print(f'df adjOHLCV (df_a) after dropped symbols:   {len(df_a.columns)/5:>5,.0f}
 print(f'df Close (df_c) after dropped symbols:      {len(df_c.columns):>5,}    {len(df_c):>5,}')
 
 
-# %%
+
 pickle_dump(df_a, path_data_dump, filename_pickled_df_a)
 print(f'pickled df adjOHLCV after dropping symbols with no volume, same volume, and no close:\n{path_data_dump}{filename_pickled_df_a}')
 pickle_dump(df_c, path_data_dump, filename_pickled_df_c)
 print(f'pickled df Close after dropping symbols with no volume, same volume, and no close:\n{path_data_dump}{filename_pickled_df_c}')
 
-# %%
+
 from myUtils import list_dump
 
 f_symbols_df_close_clean = 'symbols_df_close_clean.csv'  # symbols text file
 symbols_df_c = list(df_c)  # column names in df_c
 list_dump(symbols_df_c, path_data_dump, f_symbols_df_close_clean)# df_c.columns.to_csv(f_symbols_df_close_clean)
 
-# %%
+
 df_a.tail()
 
-# %%
+
 df_c.tail()
 
 

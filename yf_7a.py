@@ -15,7 +15,8 @@ path_data_dump = path_dir + "VSCode_dump/"
 
 fp_df_close_clean = "df_close_clean"
 
-# SELECT RUN PARAMETERS.async Parameters can also be passed using papermill by running yf_7_freq_cnt_pm_.ipynb
+#######################################################################
+## SELECT RUN PARAMETERS.async Parameters can also be passed using papermill by running yf_7_freq_cnt_pm_.ipynb
 # verbose = True  # True prints more output
 verbose = False  # True prints more output
 
@@ -57,9 +58,8 @@ syms_end = 10
 # fp_df_eval_results = f"df_eval_results_{run_type}"
 fp_df_eval_results = "df_eval_trash_new"
 ##########################################################
+#######################################################################
 
-
-fp_df_picks = "df_picks"
 
 print(f"verbose : {verbose }")
 print(f"store_results: {store_results}")
@@ -71,9 +71,7 @@ print(f"n_top_syms: {n_top_syms}")
 print(f"syms_start: {syms_start}")
 print(f"syms_end: {syms_end}")
 print(f"fp_df_eval_results: {fp_df_eval_results}")
-print(f"fp_df_picks: {fp_df_picks}")
 
-df_picks = pickle_load(path_data_dump, fp_df_picks)
 df_close_clean = pickle_load(path_data_dump, fp_df_close_clean)
 
 # Split df_close_clean into training (df_train), validation (df_val) and test (df_test) set.
