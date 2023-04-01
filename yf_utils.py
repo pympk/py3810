@@ -1,3 +1,4 @@
+
 def split_train_val_test(
     df, s_train=0.7, s_val=0.2, s_test=0.1, verbose=False
 ):
@@ -43,6 +44,7 @@ def split_train_val_test(
         print(f"sum_train_val_test: {sum_train_val_test}")
 
     return df_train, df_val, df_test
+
 
 def random_slices(len_df, n_samples, days_lookback, days_eval, verbose=False):
     """Returns a list of random tuples of start_train, end_train, end_eval, where
@@ -100,6 +102,7 @@ def random_slices(len_df, n_samples, days_lookback, days_eval, verbose=False):
 
     return r_slices
 
+
 def lookback_slices(max_slices, days_lookbacks, verbose=False):
     """
     Create sets of sub-slices from max_slices and days_lookbacks. A slice is
@@ -138,6 +141,7 @@ def lookback_slices(max_slices, days_lookbacks, verbose=False):
             print("")
 
     return lb_slices
+
 
 def perf_ranks_old(df_close, days_lookbacks, verbose=False):
     """Returns perf_ranks_dict(dic. of dic. of symbols ranked in descending
@@ -752,7 +756,7 @@ def top_set_sym_freq_cnt(top_set_syms_n_freq):
     return l_sym_freq_cnt
 
 
-def compare_picks_v_SPY_(df_eval, df_SPY):
+def compare_picks_v_SPY(df_eval, df_SPY):
     import numpy as np
     from myUtils import symb_perf_stats_vectorized_v8 as sps
 
@@ -946,7 +950,7 @@ def get_grp_top_syms_n_freq(df, sets_lookback_slices, days_lookbacks, n_top_syms
 
 
 
-def eval_grp_top_syms_n_freq_(df, max_lookback_slices, sets_lookback_slices, grp_top_set_syms_n_freq, days_lookbacks, days_eval, n_samples,  n_top_syms, syms_start, syms_end, verbose):
+def eval_grp_top_syms_n_freq(df, max_lookback_slices, sets_lookback_slices, grp_top_set_syms_n_freq, days_lookbacks, days_eval, n_samples,  n_top_syms, syms_start, syms_end, verbose):
     import pandas as pd
     from myUtils import symb_perf_stats_vectorized_v8
 

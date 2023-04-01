@@ -2,15 +2,142 @@ import pandas as pd
 import numpy as np
 from myUtils import pickle_load, pickle_dump
 from myUtils import symb_perf_stats_vectorized_v8 as sps
-from yf_utils import split_train_val_test, random_slices, lookback_slices
+from yf_utils import lookback_slices
 from yf_utils import top_set_sym_freq_cnt, get_grp_top_syms_n_freq
 
 
 
 
+def split_train_val_test_v1(
+    df, s_train=0.7, s_val=0.2, s_test=0.1
+):
+    """Split df into training (df_train), validation (df_val)
+    and test (df_test) and returns the splitted dfs
+
+    Args:
+        df(dataframe): dataframe to be splitted
+        s_train(float): ratio of df_train / df, default = 0.7
+        s_val(float): ratio of df_val / df, default = 0.2
+        s_test(float): ratio of df_test / df, default = 0.1
+
+    Return:
+        df_train(dataframe): training portion of df
+        df_val(dataframe): validation portion of df
+        df_test(dataframe): test portion of df
+    """
+
+    if (s_train + s_val + s_test) - 1 > 0.0001:  # allow 0.01% error
+        _sum = s_train + s_val + s_test
+        raise Exception(
+            f"s_train({s_train}) + s_val({s_val}) + s_test({s_test}) = \
+                s_sum({_sum}), It must sums to 1"
+        )
+    n_train = round(len(df) * s_train)
+    n_val = round(len(df) * s_val)
+    # n_test = round(len(df) * s_test)
+    df_train = df.iloc[0:n_train]
+    df_val = df.iloc[n_train : (n_train + n_val)]
+    df_test = df.iloc[(n_train + n_val) : :]
+
+    return df_train, df_val, df_test
 
 
-def compare_picks_v_SPY(df_eval, df_SPY):
+def random_slices_v1(len_df, n_samples, days_lookback, days_eval):
+    """Returns a list of random tuples of start_train, end_train, end_eval, where
+    iloc[start_train:end_train] is used for training,
+    and iloc[end_train:end_eval] is used for evaluation.  The length of the
+    list is equal to n_samples.
+    i.e. [(248, 368, 388), (199, 319, 339), ... (45, 165, 185)]
+
+    Args:
+        len_df(int): length of dataframe
+        n_samples(int): number of slices to return
+        days_lookback(int):  number of days to lookback for training
+        days_eval(int): number of days forward for evaluation
+
+    Return:
+        r_slices(list of tuples): list of random tuples of start_train,
+        end_train, end_eval, where iloc[start_train:end_train] is used for
+        training, and iloc[end_train:end_eval] is used for evaluation.
+          i.e. [(248, 368, 388), (199, 319, 339), ... (45, 165, 185)]
+    """
+    # v1 correct out-of-bound end_eval
+    # v2 2023-03-11 check df generated from the random slices 
+
+    # import random
+    from random import randint
+
+    # random.seed(0)
+    n_sample = 0
+    days_total = days_lookback + days_eval
+
+    if days_total > len_df:    
+        msg_err = f"days_total: {days_total} must be less or equal to len_df: {len_df}"
+        raise SystemExit(msg_err)
+
+    # random slices of iloc for train and eval that fits the constraints:
+    #  days_lookback + days_eval > len_df
+    #  start_train >= 0
+    #  end_train - start_train = days_lookback
+    #  end_eval - end_train = days_eval
+    #  end_eval <= len_df
+    r_slices = []
+    while n_sample < n_samples:
+        n_rand = randint(0, len_df)
+        start_train = n_rand - days_lookback
+        end_train = n_rand
+        # start_eval = n_rand
+        end_eval = n_rand + days_eval
+        if 0 <= start_train and end_eval <= len_df:              
+            r_slices.append((start_train, end_train, end_eval))
+            n_sample += 1
+
+    return r_slices
+
+
+
+
+def lookback_slices_v1(max_slices, days_lookbacks):
+    """
+    Create sets of sub-slices from max_slices and days_lookbacks. A slice is
+    a tuple of iloc values for start_train:end_train=start_eval:end_eval.
+    Given 2 max_slices of [(104, 224, 234), (626, 746, 756)], it returns 2 sets
+    [[(194, 224, 234), (164, 224, 234), (104, 224, 234)],
+    [(716, 746, 756), (686, 746, 756), (626, 746, 756)]]. End_train is constant
+    for each set. End_train-start_train is the same value from max_slice.
+
+    Args:
+        max_slices(list of tuples): list of iloc values for
+        start_train:end_train=start_eval:end_eval, where end_train-start_train
+        is the max value in days_lookbacks
+        days_lookback(int):  number of days to lookback for training
+
+    Return:
+        lb_slices(list of lists of tuples): each sublist is set of iloc for
+        start_train:end_train:end_eval tuples, where the days_lookbacks are
+        the values of end_train-start_train in the set, and end_train-end_eval
+        are same values from max_slices. The number of sublist is equal to
+        number of max_slices. The number of tuples in the sublists is equal to
+        number
+    """
+
+    lb_slices = []
+    days_lookbacks.sort()  # sort list of integers in ascending order
+    for max_slice in max_slices:
+        l_max_slice = []
+        for days in days_lookbacks:
+            new_slice = (max_slice[1] - days, max_slice[1], max_slice[2])
+            l_max_slice.append(new_slice)
+
+        lb_slices.append(l_max_slice)
+
+    return lb_slices
+
+
+
+
+
+def compare_picks_v_SPY_v1(df_eval, df_SPY):
     # import numpy as np
     # from myUtils import symb_perf_stats_vectorized_v8 as sps
 
@@ -87,7 +214,7 @@ def compare_picks_v_SPY(df_eval, df_SPY):
 
     return _d_cols_values
 
-def eval_grp_top_syms_n_freq(df, max_lookback_slices, sets_lookback_slices, grp_top_set_syms_n_freq, verbose):
+def eval_grp_top_syms_n_freq_v1(df, max_lookback_slices, sets_lookback_slices, grp_top_set_syms_n_freq, verbose):
 # def eval_grp_top_syms_n_freq(df, max_lookback_slices, sets_lookback_slices, grp_top_set_syms_n_freq, days_lookbacks, days_eval, n_samples,  n_top_syms, syms_start, syms_end, verbose):
     # import pandas as pd
     from myUtils import symb_perf_stats_vectorized_v8
@@ -184,7 +311,7 @@ def eval_grp_top_syms_n_freq(df, max_lookback_slices, sets_lookback_slices, grp_
                     df_eval_n_SPY = df[iloc_start_eval:iloc_end_eval][syms_n_SPY]
                     print(f"\ndf_eval_n_SPY:\n{df_eval_n_SPY}\n")
 
-                d_cols_values = compare_picks_v_SPY(df_eval, df_SPY)
+                d_cols_values = compare_picks_v_SPY_v1(df_eval, df_SPY)
                 val_rows = []
 
                 print(f"Function compare_picks_v_SPY returned column_name:value pairs")
@@ -235,8 +362,8 @@ if __name__ == '__main__':
 
     #######################################################################
     ## SELECT RUN PARAMETERS.async Parameters can also be passed using papermill by running yf_7_freq_cnt_pm_.ipynb
-    # verbose = True  # True prints more output
-    verbose = False  # True prints more output
+    verbose = True  # True prints more output
+    # verbose = False  # True prints more output
 
     # write run results to df_eval_results
     # store_results = False
@@ -253,9 +380,9 @@ if __name__ == '__main__':
     n_samples = 2
 
     # for training, the number of days to lookback from iloc max-lookback iloc_end_train
-    # days_lookbacks = [15, 30, 60]
+    days_lookbacks = [15, 30, 60]
     # days_lookbacks = [30, 60, 120]
-    days_lookbacks = [15, 30, 60, 120]
+    # days_lookbacks = [15, 30, 60, 120]
     days_lookbacks.sort()
 
     # number of days in dataframe to evaluate effectiveness of the training, days_eval = len(df_eval)
@@ -278,7 +405,6 @@ if __name__ == '__main__':
     ##########################################################
     #######################################################################
 
-
     print(f"verbose : {verbose }")
     print(f"store_results: {store_results}")
     print(f"run_type: {run_type}")
@@ -288,16 +414,16 @@ if __name__ == '__main__':
     print(f"n_top_syms: {n_top_syms}")
     print(f"syms_start: {syms_start}")
     print(f"syms_end: {syms_end}")
-    print(f"fp_df_eval_results: {fp_df_eval_results}")
+    print(f"fp_df_eval_results: {fp_df_eval_results}\n")
 
     df_close_clean = pickle_load(path_data_dump, fp_df_close_clean)
 
     # Split df_close_clean into training (df_train), validation (df_val) and test (df_test) set.
     # The default split is 0.7, 0.2, 0.1 respectively.
-    df_train, df_val, df_test = split_train_val_test(df_close_clean)
+    df_train, df_val, df_test = split_train_val_test_v1(df_close_clean, s_train=0.7, s_val=0.2, s_test=0.1)
 
     max_days_lookbacks = max(days_lookbacks)
-    print(f"max_days_lookbacks: {max_days_lookbacks}")
+    print(f"max_days_lookbacks: {max_days_lookbacks}\n")
 
     # Load df according to run_type
     if run_type == "train":
@@ -318,27 +444,26 @@ if __name__ == '__main__':
     len_df_test = len(df_test)
     print(f"run_type: {run_type}, len(df): {len(df)}")
     print(
-        f"len_df_train: {len_df_train}, len_df_val: {len_df_val}, len_df_test: {len_df_test}"
+        f"len_df_train: {len_df_train}, len_df_val: {len_df_val}, len_df_test: {len_df_test}\n"
     )
 
     # return n_samples slices
-    max_lookback_slices = random_slices(
+    max_lookback_slices = random_slices_v1(
         len_df,
         n_samples=n_samples,
-        days_lookback=max(days_lookbacks),
+        days_lookback=max_days_lookbacks,
         days_eval=days_eval,
-        verbose=False,
     )
     # return n_samples * len(days_lookbacks) slices
-    sets_lookback_slices = lookback_slices(
-        max_slices=max_lookback_slices, days_lookbacks=days_lookbacks, verbose=False
+    sets_lookback_slices = lookback_slices_v1(
+        max_slices=max_lookback_slices, days_lookbacks=days_lookbacks
     )
 
     if verbose:
         print(f"number of max_lookback_slices is equal to n_samples = {n_samples}")
-        print(f"max_lookback_slices:\n{max_lookback_slices}\n")
+        print(f"max_lookback_slices:\n{max_lookback_slices}")
         print(f"number of sets in sets_lookback_slices is equal to n_samples = {n_samples}")
-        print(f"sets_lookback_slices:\n{sets_lookback_slices}\n")
+        print(f"sets_lookback_slices:\n{sets_lookback_slices}")
         print(f"days_lookbacks: {days_lookbacks}")
         print(
             f'number of tuples in each "set of lookback slices" is equal to len(days_lookbacks): {len(days_lookbacks)}'
@@ -381,7 +506,7 @@ if __name__ == '__main__':
 
 
     # #### Evaluate performance of symbols in set_lookback_slices versus SPY
-    l_row_add_total = eval_grp_top_syms_n_freq(
+    l_row_add_total = eval_grp_top_syms_n_freq_v1(
         df, max_lookback_slices, sets_lookback_slices, grp_top_set_syms_n_freq, verbose
         # df, max_lookback_slices, sets_lookback_slices, grp_top_set_syms_n_freq, days_lookbacks, days_eval, n_samples, n_top_syms, syms_start, syms_end, verbose
     )
