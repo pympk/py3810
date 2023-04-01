@@ -472,6 +472,8 @@ def grp_tuples_sort_sum(l_tuples, reverse=True):
 
     return grp_sorted_list
 
+
+
 def perf_eval_(df_close):
     """
     df_close is a dataframe with date index, columns of symbols' closing price, and symbols as column names.
