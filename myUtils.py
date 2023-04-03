@@ -5951,3 +5951,27 @@ def chunked_list(a_list, chunk_size):
     for i in range(0, len(a_list), chunk_size):
         chunked_list.append(a_list[i:i+chunk_size])
     return chunked_list
+
+def delete_all_rows(path_data_dump, filename_pickle, verbose=False):
+    """Load pickled df, delete all rows in df, and save pickled df.
+
+    Args:
+        path_data_dump(str): path to write the pickle file
+        filename_pickle(str): pickle filename
+
+    Return:
+        None
+    """  
+  
+    from myUtils import pickle_dump, pickle_load
+
+    df = pickle_load(path_data_dump, filename_pickle)
+    if verbose:
+        print(f'{filename_pickle}.tail(3) before delete_all_rows:\n{df.tail(3)}\n\n')
+    # delete all rows in df
+    df = df[0:0]
+    pickle_dump(df, path_data_dump, filename_pickle)
+    if verbose:
+        print(f'{filename_pickle}.tail(3) after delete_all_rows:\n{df.tail(3)}\n')
+        print(f'{filename_pickle} save to: {path_data_dump}{filename_pickle}\n\n')
+    return None
