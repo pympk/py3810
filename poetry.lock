@@ -1234,6 +1234,17 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
+name = "requests-futures"
+version = "1.0.0"
+description = "Asynchronous Python HTTP for Humans."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+requests = ">=1.2.0"
+
+[[package]]
 name = "scipy"
 version = "1.8.1"
 description = "SciPy: Scientific Library for Python"
@@ -1580,6 +1591,25 @@ python-versions = ">=3.7.0"
 h11 = ">=0.9.0,<1"
 
 [[package]]
+name = "yahooquery"
+version = "2.3.1"
+description = "Python interface to unofficial Yahoo Finance API endpoints"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+lxml = ">=4.9.1"
+pandas = ">=0.24.0"
+requests-futures = ">=1.0.0"
+tqdm = ">=4.54.1"
+
+[package.extras]
+doc = ["mkdocs (>=1.1.2,<2.0.0)", "mkdocs-jupyter (>=0.12.0,<0.13.0)", "mkdocs-material (>=6.1.7,<7.0.0)"]
+premium = ["selenium (>=3.141.0)"]
+test = ["pytest (==6.0.2)", "pytest-cov (==2.10.1)", "coverage (==5.2.1)", "selenium (>=3.141.0)"]
+
+[[package]]
 name = "yfinance"
 version = "0.2.12"
 description = "Download market data from Yahoo! Finance API"
@@ -1615,7 +1645,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "flake8 (<5)", "pytest-co
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.1"
-content-hash = "107de005d1c95f606f708d943c1a6b665acd694053dea8e4ba310dea8720fb0d"
+content-hash = "74b642fb4266fa0a174b8b39d221b5e58422e30474315c080d90282d9e964595"
 
 [metadata.files]
 ansiwrap = []
@@ -1780,6 +1810,7 @@ pywin32 = []
 pyyaml = []
 pyzmq = []
 requests = []
+requests-futures = []
 scipy = []
 selenium = []
 setuptools-scm = []
@@ -1819,5 +1850,6 @@ webencodings = [
 ]
 widgetsnbextension = []
 wsproto = []
+yahooquery = []
 yfinance = []
 zipp = []
