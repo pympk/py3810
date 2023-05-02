@@ -1,51 +1,26 @@
-def calc_portf_value_date_n(my_dates, my_symbols, df_close, my_portf_shares, n, verbose=False):
-  
-  z_date_syms_shares = zip(my_dates, my_symbols, my_portf_shares)
+def get_Invested_Capital(dict, index_dict):
+  """
+  Get net operating profit after tax from yahoo query for a symbol.
+  dict is nested dictionary from a query of all modules for a symbol.
+  index_dict is the index for the nested dictionaries, where index_dict=0 is the latest statement.
+  The maximum for index_dict is 3 since yahoo returns 4 of the most recent statements.
+  """  
 
-  date_exec = []  # buy date of portfolio
-  shares_syms = []  # lists of shares of each symbol brought on date
-  value_portf = [] # list of porfolio value on date
-  # shares_SPY = []  # list of shares of SPY brought on date
-  # value_SPY = []  # list of value of SPY shares on date 
+  key_chain_bal_stmt_endDate = [index_dict, 'balanceSheetHistory', 'balanceSheetStatements', 'endDate']
+  bal_stmt_end_date = chained_get(d_sorted_modules, *key_chain_bal_stmt_endDate)
 
-  for date, symbols, portf_shares in z_date_syms_shares:
-    next_date_n = get_NYSE_date_n(date, dates_NYSE_2013_2023, n, verbose=False)
-    close_date_n = is_date_in_close(next_date_n, df_close)
+  key_chain_totalLiab = [index_dict, 'balanceSheetHistory', 'balanceSheetStatements', 'totalLiab']
+  totalLiab = chained_get(d_sorted_modules, *key_chain_totalLiab)
 
-    if close_date_n is None:
-      p_date_exec = None
-      p_ar_shares = None
-      p_value_portf = None  # set to None when data are not available in df_close
-      # SPY_shares = None
-      # SPY_value = None  # set to None when data are not available in df_close
+  key_chain_totalStockholderEquity = [index_dict, 'balanceSheetHistory', 'balanceSheetStatements', 'totalStockholderEquity']
+  totalStockholderEquity = chained_get(d_sorted_modules, *key_chain_totalStockholderEquity)
 
-      if verbose:
-        print(f"No data for close_date_n {close_date_n}, pick's portf value = None")
-        # print(f'No data for next_date_n {next_date_n}, SPY portf value =    None')
+  key_chain_cash = [index_dict, 'balanceSheetHistory', 'balanceSheetStatements', 'cash']
+  cash = chained_get(d_sorted_modules, *key_chain_cash)
 
-    else: 
-      if portf_shares is None:
-        p_date_exec = None
-        p_ar_shares = None
-        p_value_portf = None
+  key_chain_shortTermInvestments = [index_dict, 'balanceSheetHistory', 'balanceSheetStatements', 'shortTermInvestments']
+  shortTermInvestments = chained_get(d_sorted_modules, *key_chain_shortTermInvestments)
 
-      else:  
-        # p_ar_shares = calc_portf_shares(df_close, next_date_n, symbols, portf_target)
-        p_date_exec, p_ar_syms, p_ar_price, p_ar_shares, p_ar_value, p_value_portf = \
-          calc_portf_value(df_close, close_date_n, symbols, portf_shares, verbose)
-          # calc_portf_value(df_close, next_date_n, symbols, portf_shares, verbose)      
-
-        if verbose:
-          print(f"next_date_n pick's portf value = {p_value_portf}")
-          # print(f'next_date_n SPY portf value =    {SPY_value}')
-
-    date_exec.append(p_date_exec)
-    shares_syms.append(p_ar_shares)
-    value_portf.append(p_value_portf)
-    # shares_SPY.append(SPY_shares)
-    # value_SPY.append(SPY_value)
-
-    print('='*20, '\n')
-
-  return date_exec, shares_syms, value_portf   
-    
+  # https://seekingalpha.com/article/4486058-return-on-invested-capital
+  Invested_Capital = totalLiab + totalStockholderEquity - (cash + shortTermInvestments)
+  return Invested_Capital, totalLiab, totalStockholderEquity, cash, shortTermInvestments, bal_stmt_end_date
