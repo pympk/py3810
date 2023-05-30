@@ -325,6 +325,14 @@ python-versions = "*"
 devel = ["colorama", "jsonschema", "json-spec", "pylint", "pytest", "pytest-benchmark", "pytest-cache", "validictory"]
 
 [[package]]
+name = "ffmpeg"
+version = "1.4"
+description = "ffmpeg python package url [https://github.com/jiashaokun/ffmpeg]"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "flake8"
 version = "6.0.0"
 description = "the modular source code checker: pep8 pyflakes and co"
@@ -1653,7 +1661,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "flake8 (<5)", "pytest-co
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.1"
-content-hash = "7f33379c60e7e66dc42b3e6e892670de1634e4ec61dc5bb525adede406c64da8"
+content-hash = "dea75d4b377144d440aec5c93a19444ac8194c16b64aa746c5dff9260dc2cd1e"
 
 [metadata.files]
 ansiwrap = []
@@ -1705,6 +1713,7 @@ exceptiongroup = []
 exchange-calendars = []
 executing = []
 fastjsonschema = []
+ffmpeg = []
 flake8 = []
 fonttools = []
 frozendict = []
