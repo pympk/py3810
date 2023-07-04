@@ -376,6 +376,19 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "graphviz"
+version = "0.20.1"
+description = "Simple Python interface for Graphviz"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+dev = ["tox (>=3)", "flake8", "pep8-naming", "wheel", "twine"]
+docs = ["sphinx (>=5)", "sphinx-autodoc-typehints", "sphinx-rtd-theme"]
+test = ["pytest (>=7)", "pytest-mock (>=3)", "mock (>=4)", "pytest-cov", "coverage"]
+
+[[package]]
 name = "h11"
 version = "0.14.0"
 description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
@@ -1661,7 +1674,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "flake8 (<5)", "pytest-co
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.1"
-content-hash = "dea75d4b377144d440aec5c93a19444ac8194c16b64aa746c5dff9260dc2cd1e"
+content-hash = "736e1de5824519ab8c04cfcfb84df1151ca2d1bed8377387999b960135bb583e"
 
 [metadata.files]
 ansiwrap = []
@@ -1717,6 +1730,7 @@ ffmpeg = []
 flake8 = []
 fonttools = []
 frozendict = []
+graphviz = []
 h11 = []
 html5lib = []
 idna = []
