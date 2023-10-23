@@ -1577,6 +1577,14 @@ typing-extensions = "*"
 opt-einsum = ["opt-einsum (>=3.3)"]
 
 [[package]]
+name = "torchsummary"
+version = "1.5.1"
+description = "Model summary in PyTorch similar to `model.summary()` in Keras"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "torchviz"
 version = "0.0.2"
 description = "A small package to create visualizations of PyTorch execution graphs"
@@ -1784,7 +1792,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "flake8 (<5)", "pytest-co
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.1"
-content-hash = "8ff18de651e8b06a973f2d7aac6e3428ca96cf04314d1bf7f613c62cd11c062e"
+content-hash = "81ed6b984df189cf6dcf5c7c08c381b51353dd79fe9413690a00c6b3bdc2b768"
 
 [metadata.files]
 ansiwrap = []
@@ -1984,6 +1992,7 @@ tomli = [
 ]
 toolz = []
 torch = []
+torchsummary = []
 torchviz = []
 tornado = []
 tqdm = []
