@@ -100,6 +100,7 @@ from yf_utils import random_slices, lookback_slices
 from yf_utils import rank_perf, grp_tuples_sort_sum, top_set_sym_freq_cnt
 from myUtils import pickle_load, pickle_dump
 
+
 pd.set_option("display.max_rows", 20)
 pd.set_option("display.max_columns", 11)
 pd.set_option("display.max_colwidth", 16)
@@ -140,16 +141,9 @@ syms_start = 0
 syms_end = 10
 
 
-
-
-# get picks of previous days by dropping the last n rows from df_current
-#  drop_last_n_rows = 1 drops the last row from df_current
-drop_last_n_rows = 0
-# drop_last_n_rows = 4
-
-
-
 #########################################################################
+
+
 
 print(f"verbose : {verbose }")
 print(f"store_results: {store_results}")
@@ -161,30 +155,50 @@ print(f"syms_start: {syms_start}")
 print(f"syms_end: {syms_end}")
 print(f"fp_df_picks: {fp_df_picks}\n\n")
 
+
+fp_df_close_clean = "df_close_clean"
+fp_dates_missing_in_df_picks = "dates_missing_in_df_picks"
+
 df_picks = pickle_load(path_data_dump, fp_df_picks)
 df_close_clean = pickle_load(path_data_dump, fp_df_close_clean)
 df_current = df_close_clean.copy()
 
-for i, days_lookbacks in enumerate(l_sorted_days_lookbacks):
+# get picks of previous days by dropping the last n rows from df_current
+#  drop_last_n_rows = 1 drops the last row from df_current
+drop_last_n_rows = 0
+# drop_last_n_rows = 4
 
-    print(f'\n\n{"%"*40:<42}{i+1} of {len(l_sorted_days_lookbacks)} days_lookbacks{"%"*40:>42}\n')
-    max_days_lookbacks = max(days_lookbacks)
-    print(f"max_days_lookbacks: {max_days_lookbacks}\n")
+dates_missing_in_df_picks = \
+  pickle_load(path_data_dump, fp_dates_missing_in_df_picks)
+print(
+    f"dates_missing_in_df_picks, len({len(dates_missing_in_df_picks)}):\n{dates_missing_in_df_picks}"
+)
 
-    slice_start = -(max_days_lookbacks + drop_last_n_rows)
-    slice_end = -drop_last_n_rows
-    if drop_last_n_rows == 0:  # return df with all rows
-        df = df_current[slice_start:].copy()
-    else:  # return df with dropped drop_last_n_rows rows
-        df = df_current[slice_start:slice_end].copy()
+get_n_dates_to_drop = get_n_dates_to_drop(df_current.index, dates_missing_in_df_picks)
+print(get_n_dates_to_drop)
 
 
-    print(f"df.head():\n{df.head()}\n")        
-    print(f"dropped last {drop_last_n_rows} row(s) from df")
-    print(f"df.tail():\n{df.tail()}\n")
-    len_df = len(df)
-    # len_df_current = len(df_current)
-    print(f"len(df): {len(df)}")
+
+# for i, days_lookbacks in enumerate(l_sorted_days_lookbacks):
+
+#     print(f'\n\n{"%"*40:<42}{i+1} of {len(l_sorted_days_lookbacks)} days_lookbacks{"%"*40:>42}\n')
+#     max_days_lookbacks = max(days_lookbacks)
+#     print(f"max_days_lookbacks: {max_days_lookbacks}\n")
+
+#     slice_start = -(max_days_lookbacks + drop_last_n_rows)
+#     slice_end = -drop_last_n_rows
+#     if drop_last_n_rows == 0:  # return df with all rows
+#         df = df_current[slice_start:].copy()
+#     else:  # return df with dropped drop_last_n_rows rows
+#         df = df_current[slice_start:slice_end].copy()
+
+
+#     print(f"df.head():\n{df.head()}\n")        
+#     print(f"dropped last {drop_last_n_rows} row(s) from df")
+#     print(f"df.tail():\n{df.tail()}\n")
+#     len_df = len(df)
+#     # len_df_current = len(df_current)
+#     print(f"len(df): {len(df)}")
 
 
 
