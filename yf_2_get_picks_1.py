@@ -120,6 +120,7 @@ verbose = True  # True prints more output
 store_results = True
 # store_results = False
 
+# TODO what is this?
 n_samples = 1  # only need 1 sample to get the current picks
 
 # for training, the number of days to lookback from iloc max-lookback iloc_end_train
