@@ -45,8 +45,9 @@ def split_train_val_test(
     return df_train, df_val, df_test
 
 def random_slices(len_df, n_samples, days_lookback, days_eval, verbose=False):
-    """Returns a list of random tuples of start_train, end_train, end_eval, where
-    iloc[start_train:end_train] is used for training,
+    """
+    Returns a list of random tuples of start_train, end_train, end_eval,
+    where iloc[start_train:end_train] is used for training,
     and iloc[end_train:end_eval] is used for evaluation.  The length of the
     list is equal to n_samples.
     i.e. [(248, 368, 388), (199, 319, 339), ... (45, 165, 185)]
@@ -107,7 +108,8 @@ def lookback_slices(max_slices, days_lookbacks, verbose=False):
     Given 2 max_slices of [(104, 224, 234), (626, 746, 756)], it returns 2 sets
     [[(194, 224, 234), (164, 224, 234), (104, 224, 234)],
     [(716, 746, 756), (686, 746, 756), (626, 746, 756)]]. End_train is constant
-    for each set. End_train-start_train is the same value from max_slice.
+    for each set. End_train - start_train is the value of the maximum slice.    
+
 
     Args:
         max_slices(list of tuples): list of iloc values for
