@@ -2,6 +2,7 @@
   "[python]": {
     "editor.defaultFormatter": "ms-python.autopep8"
   },
-  "python.formatting.provider": "none",
-  "python.analysis.typeCheckingMode": "basic"
+  "python.formatting.provider": "black",
+  "python.analysis.typeCheckingMode": "basic",
+  "editor.defaultFormatter": "ms-python.flake8"
 }
