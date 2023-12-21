@@ -1,7 +1,7 @@
 def calc_portf_value_date_buy_(dates_in_days_lookbacks, my_symbols, df_close, portf_target, n, verbose=False):
 
   from ast import literal_eval
-  from work import any_not_in_list, get_trading_date_n
+  from work11 import any_not_in_list, get_trading_date_n
 
   # Trading dates
   idx_close = df_close.index.strftime('%Y-%m-%d')
@@ -189,7 +189,7 @@ def calc_portf_value(df_close, date, str_symbols, ar_shares, verbose=False):
 def calc_portf_value_date_n(dates_in_days_lookbacks, my_symbols, df_close, my_portf_shares, my_SPY_shares, n, verbose=False):
 
   from ast import literal_eval
-  from work import any_not_in_list, get_trading_date_n
+  from work11 import any_not_in_list, get_trading_date_n
 
 
  # Trading dates
@@ -252,3 +252,49 @@ def calc_portf_value_date_n(dates_in_days_lookbacks, my_symbols, df_close, my_po
     print('='*20, '\n')
 
   return date_exec, shares_syms, value_portf, shares_SPY, value_SPY  
+
+
+###############################
+def calc_portfolio_on_date(df_close, date, symbols, portf_shares=None, verbose=False):
+  """
+  Calculates the portfolio value and shares for a given date and list of symbols.
+
+  Args:
+    df_close: A DataFrame containing closing prices for the symbols.
+    date: The date for which to calculate the portfolio.
+    symbols: A list of symbols to buy or update.
+    portf_shares: (Optional) A list of pre-existing portfolio shares. Used by `calc_portf_value_date_n`.
+    verbose: (Optional) A boolean flag to control the amount of printed information.
+
+  Returns:
+    date_exec: The trading date on which the portfolio was bought or updated.
+    symbols: The list of symbols in the portfolio.
+    ar_shares: A list of number of shares for each symbol.
+    ar_price: A list of closing prices for each symbol.
+    ar_value: A list of the value of each position.
+    portf_value: The total value of the portfolio.
+  """
+
+  # Calculate the next trading date if needed
+  if portf_shares is None:
+    ar_shares, ar_price, ar_value, portf_value = None, None, None, None
+  else:
+    next_date = get_trading_date_n(date, df_close.index, n=1, verbose=verbose)
+    close_date_n = is_date_in_close(next_date, df_close)
+    
+    if close_date_n is None:
+      if verbose:
+        print(f"No data for close_date_n {close_date_n}, pick's portf value = None")
+      ar_shares, ar_price, ar_value, portf_value = None, None, None, None
+    else:
+      ar_shares, ar_price, ar_value, portf_value = calc_portf_value(df_close, close_date_n, symbols, portf_shares, verbose=verbose)
+
+  # Update date and symbol information
+  date_exec = close_date_n if close_date_n else date
+  symbols = str(['SPY']) if symbols is None else symbols
+
+  return date_exec, symbols, ar_shares, ar_price, ar_value, portf_value
+
+
+
+###############################
