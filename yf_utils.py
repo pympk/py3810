@@ -65,22 +65,19 @@ def random_slices(len_df, n_samples, days_lookback, days_eval, verbose=False):
           i.e. [(248, 368, 388), (199, 319, 339), ... (45, 165, 185)]
     """
     # v1 correct out-of-bound end_eval
-    # v2 2023-03-11 check df generated from the random slices 
+    # v2 2023-03-11 check df generated from the random slices
+    # v3 move error check "days_total > len_df" to calling script 
 
     # import random
     from random import randint
 
-    # random.seed(0)
-    n_sample = 0
-    days_total = days_lookback + days_eval
+    # initialize counter
+    n_sample = 0  
+
     if verbose:
         print(
             f"days_lookback: {days_lookback}, days_eval: {days_eval}, days_total: {days_total}, len_df: {len_df}"
         )
-
-    if days_total > len_df:    
-        msg_err = f"days_total: {days_total} must be less or equal to len_df: {len_df}"
-        raise SystemExit(msg_err)
 
     # random slices of iloc for train and eval that fits the constraints:
     #  days_lookback + days_eval > len_df
