@@ -152,6 +152,14 @@ python-versions = "*"
 pycparser = "*"
 
 [[package]]
+name = "chardet"
+version = "5.2.0"
+description = "Universal encoding detector for Python 3"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
 name = "charset-normalizer"
 version = "3.0.1"
 description = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
@@ -1294,6 +1302,23 @@ python-versions = ">=3.6"
 cffi = {version = "*", markers = "implementation_name == \"pypy\""}
 
 [[package]]
+name = "reportlab"
+version = "4.0.9"
+description = "The Reportlab Toolkit"
+category = "main"
+optional = false
+python-versions = ">=3.7,<4"
+
+[package.dependencies]
+chardet = "*"
+pillow = ">=9.0.0"
+
+[package.extras]
+accel = ["rl-accel (>=0.9.0,<1.1)"]
+pycairo = ["rlPyCairo (>=0.2.0,<1)", "freetype-py (>=2.3.0,<2.4)"]
+renderpm = ["rl-renderPM (>=4.0.3,<4.1)"]
+
+[[package]]
 name = "requests"
 version = "2.28.2"
 description = "Python HTTP for Humans."
@@ -1792,7 +1817,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "flake8 (<5)", "pytest-co
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8.1"
-content-hash = "81ed6b984df189cf6dcf5c7c08c381b51353dd79fe9413690a00c6b3bdc2b768"
+content-hash = "8c67d5708d7fad349353b3a25184708f0e2fa87258eb9243848a7b5ce172158e"
 
 [metadata.files]
 ansiwrap = []
@@ -1814,6 +1839,7 @@ black = []
 bleach = []
 certifi = []
 cffi = []
+chardet = []
 charset-normalizer = []
 click = [
     {file = "click-8.1.3-py3-none-any.whl", hash = "sha256:bb4d8133cb15a609f44e8213d9b391b0809795062913b383c62be0ee95b1db48"},
@@ -1963,6 +1989,7 @@ pytz = []
 pywin32 = []
 pyyaml = []
 pyzmq = []
+reportlab = []
 requests = []
 requests-futures = []
 scikit-learn = []
