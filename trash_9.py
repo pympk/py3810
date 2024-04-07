@@ -1,6 +1,5 @@
 
-
-def get_grp_top_syms_n_freq_v1(df, list_random_lookback_slices, days_lookbacks, n_top_syms, syms_start, syms_end, verbose=False):
+def get_grp_top_syms_n_freq(df, list_random_lookback_slices, days_lookbacks, n_top_syms, syms_start, syms_end, verbose=False):
     from yf_utils import rank_perf, grp_tuples_sort_sum
 
     # grp_top_set_syms_n_freq is a list of lists of top_set_syms_n_freq, e.g.
@@ -103,14 +102,20 @@ def get_grp_top_syms_n_freq_v1(df, list_random_lookback_slices, days_lookbacks, 
             print(
                 f"top {n_top_syms} ranked symbols and frequency from set {lb_slices}:\n{top_set_syms_n_freq}"
             )
+
+
             print(
                 f"top {n_top_syms} ranked symbols from set {lb_slices}:\n{top_set_syms}"
             )
+            print(
+                f"top {syms_start} to {syms_end} of the top {n_top_syms} ranked symbols from set {lb_slices}:\n{top_set_syms}"
+            )            
+            
+            
             print(
                 f"===== finish top {n_top_syms} ranked symbols from days_lookback set {lb_slices} =====\n\n"
             )
 
     # return grp_top_set_syms_n_freq, grp_top_set_syms
     return grp_top_set_syms_n_freq, grp_top_set_syms, dates_end_df_train
-
 
