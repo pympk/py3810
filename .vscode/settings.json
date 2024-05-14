@@ -5,5 +5,6 @@
   "python.formatting.provider": "black",
   "python.analysis.typeCheckingMode": "basic",
   "editor.defaultFormatter": "ms-python.flake8",
-  "python.analysis.autoImportCompletions": true
+  "python.analysis.autoImportCompletions": true,
+  "CodeGPT.apiKey": "Groq"
 }
