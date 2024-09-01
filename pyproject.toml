@@ -43,6 +43,7 @@ chromadb = "^0.5.0"
 langchain-openai = "^0.1.6"
 llama-index = "^0.10.37"
 streamlit = "1.29.0"
+pip = "^24.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
